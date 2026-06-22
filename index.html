@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>기업 과제 기반 인재 매칭 플랫폼 MVP</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="./">
+        <span class="brand-mark">MVP</span>
+        <span>
+          <strong>기업 과제 기반 인재 매칭 플랫폼</strong>
+          <small>Two MVP prototypes in one managed homepage</small>
+        </span>
+      </a>
+      <nav class="nav" aria-label="MVP 바로가기">
+        <a href="./saas-mvp/">SaaS형</a>
+        <a href="./job-board-mvp/">공고형</a>
+        <a href="#deploy">배포관리</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">PROJECT MATCHING PLATFORM</p>
+          <h1>두 가지 MVP를 하나의 홈페이지에서 관리합니다</h1>
+          <p>
+            기업의 실제 과제와 참여자의 역량을 연결하는 플랫폼을 두 방향으로 시연할 수 있습니다.
+            사업계획서형 SaaS 경험과 알바/채용 공고형 경험을 같은 저장소에서 계속 수정하고 배포하세요.
+          </p>
+          <div class="hero-actions">
+            <a class="primary" href="./saas-mvp/">SaaS형 MVP 열기</a>
+            <a class="secondary" href="./job-board-mvp/">공고형 MVP 열기</a>
+          </div>
+        </div>
+        <div class="hero-panel" aria-label="서비스 구조 요약">
+          <div class="panel-row">
+            <span>01</span>
+            <strong>참여자 프로필</strong>
+            <p>이력서, 전공, 기술스택, 프로젝트, 포트폴리오 등록</p>
+          </div>
+          <div class="panel-row">
+            <span>02</span>
+            <strong>기업 과제 공고</strong>
+            <p>실제 산업 과제, 필요 기술, 기간, 보상, 제출 결과물 등록</p>
+          </div>
+          <div class="panel-row">
+            <span>03</span>
+            <strong>매칭과 채용 연계</strong>
+            <p>0~100점 적합도, 지원/요청 상태, 포트폴리오 축적 흐름</p>
+          </div>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">PROTOTYPES</p>
+            <h2>시연 버전 선택</h2>
+          </div>
+          <p>둘 다 정적 웹앱이라 GitHub Pages, Vercel, Netlify에 그대로 배포할 수 있습니다.</p>
+        </div>
+
+        <div class="prototype-grid">
+          <article class="prototype-card">
+            <img src="./assets/hero-platform.png" alt="SaaS형 MVP 대시보드 이미지" />
+            <div>
+              <span class="tag">사업계획서/발표형</span>
+              <h3>SaaS형 MVP</h3>
+              <p>
+                서비스 개념, 문제 정의, 이용 흐름, 참여자/기업/관리자 대시보드가 한눈에 보이는
+                전문적인 SaaS 스타일입니다.
+              </p>
+              <ul>
+                <li>랜딩페이지 중심</li>
+                <li>참여자/기업 대시보드</li>
+                <li>매칭 점수와 성과 흐름 강조</li>
+              </ul>
+              <a class="primary" href="./saas-mvp/">열기</a>
+            </div>
+          </article>
+
+          <article class="prototype-card">
+            <img src="./job-board-mvp/assets/hero-platform.png" alt="공고형 MVP 대시보드 이미지" />
+            <div>
+              <span class="tag orange">공고검색/지원형</span>
+              <h3>공고형 MVP</h3>
+              <p>
+                알바/채용 플랫폼처럼 과제 공고를 검색하고 즉시지원하는 구조입니다.
+                기업센터는 공고 등록과 지원자 관리가 중심입니다.
+              </p>
+              <ul>
+                <li>공고 목록과 조건 필터</li>
+                <li>즉시지원 및 기업 참여 요청</li>
+                <li>공고 등록/지원자 관리 중심</li>
+              </ul>
+              <a class="primary" href="./job-board-mvp/">열기</a>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <section class="section alt" id="deploy">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">DEPLOYMENT</p>
+            <h2>계속 수정하며 관리하는 추천 방식</h2>
+          </div>
+        </div>
+
+        <div class="deploy-grid">
+          <article class="deploy-card recommended">
+            <span class="tag">추천</span>
+            <h3>GitHub Pages</h3>
+            <p>
+              현재 프로젝트처럼 HTML/CSS/JS 중심의 정적 MVP를 한 저장소에서 관리하기 좋습니다.
+              GitHub에 push하면 Pages 주소에서 바로 공유할 수 있습니다.
+            </p>
+            <ol>
+              <li>GitHub 저장소 생성</li>
+              <li>이 폴더 전체 push</li>
+              <li>Settings → Pages → Deploy from branch</li>
+              <li>Branch는 main, folder는 root 선택</li>
+            </ol>
+          </article>
+
+          <article class="deploy-card">
+            <span class="tag blue">확장형</span>
+            <h3>Vercel</h3>
+            <p>
+              나중에 React, Next.js, API, 서버 기능이 붙을 가능성이 크다면 Vercel이 좋습니다.
+              지금 구조도 바로 올릴 수 있지만, 현재 단계에서는 GitHub Pages가 더 단순합니다.
+            </p>
+            <ol>
+              <li>Vercel에서 GitHub 저장소 Import</li>
+              <li>Framework Preset은 Other</li>
+              <li>Build Command는 비워두기</li>
+              <li>Output Directory는 ./ 선택</li>
+            </ol>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <span>Task matching MVP workspace</span>
+      <span>SaaS형: ./saas-mvp/ · 공고형: ./job-board-mvp/</span>
+    </footer>
+  </body>
+</html>
