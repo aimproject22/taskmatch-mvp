@@ -1,6 +1,7 @@
 import { fields, modules, routes } from "./data.js";
 import { currentUser, login, logout, signup } from "./auth.js";
 import { calculateFit, scoreProblemList } from "./match.js";
+import { defaultRouteForRole, topRouteForRoute } from "./role-router.js";
 import { loadState, resetState, saveState, uid } from "./storage.js";
 
 let state = loadState();
@@ -8,6 +9,43 @@ let modalProblemId = null;
 let toastTimer = null;
 
 const shell = document.querySelector("#shell");
+
+const studentPortalMenu = [
+  ["dashboard", "학생 대시보드"],
+  ["problems", "실전문제 찾기"],
+  ["profile", "역량 프로필"],
+  ["team", "팀 만들기"],
+  ["applications", "내 지원 현황"],
+  ["recommendations", "추천 과제"],
+  ["education", "특화교육"],
+  ["internship", "인턴십"],
+  ["outcomes", "내 성과물"],
+];
+
+const companyPortalMenu = [
+  ["dashboard", "기업 대시보드"],
+  ["register", "원본문제 등록"],
+  ["raw-status", "등록한 문제 현황"],
+  ["applicants", "지원 학생팀"],
+  ["recommendations", "추천 인재/팀"],
+  ["mentor", "멘토 등록"],
+  ["internship", "인턴십 연계"],
+  ["mou", "MOU/NDA 관리"],
+];
+
+const adminPortalMenu = [
+  ["dashboard", "관리자 대시보드"],
+  ["raw-review", "원본문제 검토"],
+  ["convert", "실전문제 카드 전환"],
+  ["students", "학생/팀 관리"],
+  ["companies", "기업 관리"],
+  ["mentors", "멘토 관리"],
+  ["matching", "지원/매칭 관리"],
+  ["education", "특화교육 관리"],
+  ["internship", "인턴십 관리"],
+  ["kpi", "성과·KPI 관리"],
+  ["archive", "데이터 아카이브"],
+];
 
 function esc(value = "") {
   return String(value)
@@ -72,6 +110,7 @@ function chip(items, tone = "") {
 
 function header() {
   const user = currentUser(state);
+  const activeTopRoute = topRouteForRoute(route().split(":")[0]);
   return `
     <header class="site-header">
       <button class="brand" type="button" data-route="home" aria-label="과제 JOB 홈으로 이동">
@@ -81,7 +120,7 @@ function header() {
         ${routes
           .map(
             (item) => `
-              <button type="button" class="${route().split(":")[0] === item.id ? "active" : ""}" data-route="${item.id}">
+              <button type="button" class="${activeTopRoute === item.id ? "active" : ""}" data-route="${item.id}">
                 ${esc(item.label)}
               </button>
             `,
@@ -103,6 +142,10 @@ function render() {
   const [name, param] = route().split(":");
   const page = {
     home: renderHome,
+    "student-portal": renderStudentPortal,
+    "company-portal": renderCompanyPortal,
+    "admin-portal": renderAdminPortal,
+    about: renderAbout,
     problems: renderProblems,
     profile: renderProfile,
     team: renderTeam,
@@ -142,9 +185,9 @@ function renderHome() {
               사업단은 과제 재구성, 팀 매칭, 멘토링, 성과관리를 통합 지원합니다.
             </p>
             <div class="button-row" style="margin-top: 26px">
-              <button class="primary" type="button" data-route="problems">실전문제 공고 보기</button>
-              <button class="secondary" type="button" data-route="company">산업체 문제 등록</button>
-              <button class="secondary" type="button" data-route="profile">역량 프로필 등록</button>
+              <button class="primary" type="button" data-route="student-portal">학생으로 시작하기</button>
+              <button class="secondary" type="button" data-route="company-portal">기업으로 시작하기</button>
+              <button class="secondary" type="button" data-route="admin-portal">관리자 페이지</button>
             </div>
           </div>
           <aside class="hero-panel">
@@ -153,6 +196,21 @@ function renderHome() {
             <div class="flow-row"><strong>03 팀 매칭·멘토링</strong><span>AI 적합도와 멘토링으로 수행 가능성을 높입니다.</span></div>
             <div class="flow-row"><strong>04 성과·인턴십 연계</strong><span>결과물, 발표, 지재권, 인턴십으로 확장합니다.</span></div>
           </aside>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="heading">
+          <div>
+            <p class="eyebrow" style="color: var(--teal-dark)">ROLE PORTALS</p>
+            <h2>역할별 포털 선택</h2>
+          </div>
+          <p>처음 접속한 사용자가 자신의 역할을 고르면 필요한 기능만 모아진 대시보드로 이동합니다.</p>
+        </div>
+        <div class="role-grid">
+          ${roleCard("학생", "전공과 기술스택을 등록하고, 나에게 맞는 산업체 실전문제를 추천받아 팀으로 참여합니다.", "student-portal", "학생 포털로 이동")}
+          ${roleCard("기업", "현장의 기술문제를 등록하고, 적합한 학생 연구팀과 멘토링·인턴십으로 연결합니다.", "company-portal", "기업 포털로 이동")}
+          ${roleCard("사업단 관리자", "원본문제 검토, 과제 재구성, 팀 매칭, 멘토링, 성과 KPI를 통합 관리합니다.", "admin-portal", "관리자 포털로 이동")}
         </div>
       </section>
 
@@ -192,13 +250,364 @@ function renderHome() {
             <p class="eyebrow" style="color: var(--teal-dark)">RECOMMENDED PROBLEMS</p>
             <h2>추천 실전문제</h2>
           </div>
-          <button class="secondary" type="button" data-route="problems">전체 보기</button>
+          <button class="secondary" type="button" data-route="student-portal:problems">전체 보기</button>
         </div>
         <div class="grid">
           ${scoreProblemList(currentProfile(), state.problems)
             .slice(0, 3)
             .map(({ problem, fit }) => problemCard(problem, fit))
             .join("")}
+        </div>
+      </section>
+    </main>
+  `;
+}
+
+function roleCard(title, description, routeId, buttonLabel) {
+  return `
+    <article class="role-card">
+      <span class="tag orange">${esc(title)}</span>
+      <h3>${esc(title)}</h3>
+      <p>${esc(description)}</p>
+      <button class="primary" type="button" data-route="${routeId}">${esc(buttonLabel)}</button>
+    </article>
+  `;
+}
+
+function unwrapPage(html) {
+  return html.trim().replace(/^<main class="page">\s*/, "").replace(/\s*<\/main>$/, "");
+}
+
+function portalRoute(baseRoute, section) {
+  return section === "dashboard" ? baseRoute : `${baseRoute}:${section}`;
+}
+
+function portalShell({ eyebrow, title, description, baseRoute, menu, section, actions = "", content }) {
+  return `
+    <main class="page portal-page">
+      <div class="portal-hero">
+        <div>
+          <p class="eyebrow">${esc(eyebrow)}</p>
+          <h1>${esc(title)}</h1>
+          <p>${esc(description)}</p>
+        </div>
+        <div class="button-row">${actions}</div>
+      </div>
+      <div class="portal-layout">
+        <aside class="portal-menu" aria-label="${esc(title)} 내부 메뉴">
+          ${menu
+            .map(([key, label]) => `<button type="button" class="${section === key ? "active" : ""}" data-route="${portalRoute(baseRoute, key)}">${esc(label)}</button>`)
+            .join("")}
+        </aside>
+        <section class="portal-content">${content}</section>
+      </div>
+    </main>
+  `;
+}
+
+function metricCards(items) {
+  return `<div class="stat-grid portal-stat-grid">${items.map(([label, value]) => `<div class="stat"><strong>${esc(value)}</strong><span>${esc(label)}</span></div>`).join("")}</div>`;
+}
+
+function profileCompletion() {
+  const p = currentProfile();
+  const fieldsToCheck = [p.name, p.university, p.department, p.year, p.email, p.interests?.length, p.skills?.length, p.equipment?.length, p.projects, p.portfolio];
+  return Math.round((fieldsToCheck.filter(Boolean).length / fieldsToCheck.length) * 100);
+}
+
+function renderStudentPortal(section = "dashboard") {
+  const activeSection = section || "dashboard";
+  const content = {
+    dashboard: renderStudentDashboard,
+    problems: () => unwrapPage(renderProblems()),
+    profile: () => unwrapPage(renderProfile()),
+    team: () => unwrapPage(renderTeam()),
+    applications: renderStudentApplications,
+    recommendations: renderStudentRecommendations,
+    education: () => unwrapPage(renderEducation()),
+    internship: () => unwrapPage(renderInternship()),
+    outcomes: renderStudentOutcomes,
+  }[activeSection] || renderStudentDashboard;
+
+  return portalShell({
+    eyebrow: "STUDENT PORTAL",
+    title: "학생 포털",
+    description: "역량 프로필, 실전문제 추천, 팀 지원, 교육과 인턴십까지 학생에게 필요한 흐름만 모았습니다.",
+    baseRoute: "student-portal",
+    menu: studentPortalMenu,
+    section: activeSection,
+    actions: `
+      <button class="primary" type="button" data-route="student-portal:profile">역량 프로필 등록</button>
+      <button class="secondary" type="button" data-route="student-portal:problems">실전문제 찾기</button>
+      <button class="secondary" type="button" data-route="student-portal:team">팀 생성하기</button>
+      <button class="secondary" type="button" data-route="student-portal:applications">내 지원 현황 보기</button>
+    `,
+    content: content(),
+  });
+}
+
+function renderStudentDashboard() {
+  const recommended = scoreProblemList(currentProfile(), state.problems);
+  return `
+    <div class="heading compact-heading">
+      <div><h2>학생 대시보드</h2><p>프로필 완성도와 추천 과제, 지원 현황을 한 화면에서 확인합니다.</p></div>
+    </div>
+    ${metricCards([
+      ["내 역량 프로필 완성도", `${profileCompletion()}%`],
+      ["AI 추천 실전문제", `${recommended.length}건`],
+      ["지원한 과제", `${state.applications.length}건`],
+      ["참여 중인 팀", `${state.teams.length}팀`],
+      ["신청한 특화교육", `${state.courseApplications.length}건`],
+      ["추천 인턴십", "8곳"],
+    ])}
+    <section class="panel portal-panel">
+      <h2>오늘의 추천 과제</h2>
+      <div class="grid">${recommended.slice(0, 2).map(({ problem, fit }) => problemCard(problem, fit)).join("")}</div>
+    </section>
+  `;
+}
+
+function renderStudentApplications() {
+  return `
+    <div class="heading compact-heading"><div><h2>내 지원 현황</h2><p>팀 단위 지원 내역과 상태값을 확인합니다.</p></div></div>
+    ${applicationTable()}
+  `;
+}
+
+function renderStudentRecommendations() {
+  return `
+    <div class="heading compact-heading"><div><h2>추천 과제</h2><p>역량 프로필 기반 AI 적합도 순으로 정렬된 실전문제입니다.</p></div></div>
+    <div class="grid">${scoreProblemList(currentProfile(), state.problems).map(({ problem, fit }) => problemCard(problem, fit)).join("")}</div>
+  `;
+}
+
+function renderStudentOutcomes() {
+  return `
+    <div class="heading compact-heading"><div><h2>내 성과물</h2><p>실전문제 수행 결과를 포트폴리오, 발표, 인턴십 연계로 축적하는 화면입니다.</p></div></div>
+    <div class="three-col">
+      <article class="card"><span class="tag orange">포트폴리오</span><h3>프로젝트 리포트</h3><p>${esc(state.profile.projects)}</p></article>
+      <article class="card"><span class="tag blue">성과</span><h3>분석 데이터셋</h3><p>팀 과제 수행 결과물, 시연 자료, 발표 자료를 아카이브합니다.</p></article>
+      <article class="card"><span class="tag">연계</span><h3>취업·인턴십 연결</h3><p>산업체 피드백과 멘토 평가를 기반으로 인턴십 후보로 연결합니다.</p></article>
+    </div>
+  `;
+}
+
+function renderCompanyPortal(section = "dashboard") {
+  const activeSection = section || "dashboard";
+  const content = {
+    dashboard: renderCompanyDashboard,
+    register: () => unwrapPage(renderCompany()),
+    "raw-status": renderCompanyRawStatus,
+    applicants: renderCompanyApplicants,
+    recommendations: renderCompanyRecommendations,
+    mentor: () => unwrapPage(renderMentor()),
+    internship: renderCompanyInternship,
+    mou: renderMouNda,
+  }[activeSection] || renderCompanyDashboard;
+
+  return portalShell({
+    eyebrow: "COMPANY PORTAL",
+    title: "기업 포털",
+    description: "원본문제 등록, 지원팀 확인, 멘토링과 인턴십 연계까지 산업체 담당자에게 필요한 기능을 모았습니다.",
+    baseRoute: "company-portal",
+    menu: companyPortalMenu,
+    section: activeSection,
+    actions: `
+      <button class="primary" type="button" data-route="company-portal:register">산업체 원본문제 등록</button>
+      <button class="secondary" type="button" data-route="company-portal:applicants">지원 팀 확인</button>
+      <button class="secondary" type="button" data-route="company-portal:mentor">멘토 등록</button>
+      <button class="secondary" type="button" data-route="company-portal:internship">인턴십 연계 신청</button>
+    `,
+    content: content(),
+  });
+}
+
+function renderCompanyDashboard() {
+  const reviewing = state.rawProblems.filter((item) => ["접수", "검토 중", "재구성 필요"].includes(item.status)).length;
+  return `
+    <div class="heading compact-heading"><div><h2>기업 대시보드</h2><p>등록한 문제와 지원 학생팀, 멘토링 예정 흐름을 확인합니다.</p></div></div>
+    ${metricCards([
+      ["등록한 원본문제", `${state.rawProblems.length}건`],
+      ["검토 중인 문제", `${reviewing}건`],
+      ["공모 등록된 실전문제", `${state.problems.length}건`],
+      ["지원 학생팀", `${state.applications.length}팀`],
+      ["추천 학생팀", `${state.teams.length}팀`],
+      ["멘토링 예정", `${state.mentorLogs.length}건`],
+    ])}
+    <section class="panel portal-panel"><h2>추천 학생팀</h2><div class="three-col">${state.teams.map(teamSummaryCard).join("")}</div></section>
+  `;
+}
+
+function renderCompanyRawStatus() {
+  return `<div class="heading compact-heading"><div><h2>등록한 문제 현황</h2><p>산업체가 등록한 원본문제의 검토 상태를 확인합니다.</p></div></div>${rawProblemTable(state.rawProblems)}`;
+}
+
+function renderCompanyApplicants() {
+  return `<div class="heading compact-heading"><div><h2>지원 학생팀</h2><p>실전문제에 지원한 학생 연구팀 목록입니다.</p></div></div>${applicationTable()}`;
+}
+
+function renderCompanyRecommendations() {
+  return `
+    <div class="heading compact-heading"><div><h2>추천 인재/팀</h2><p>기술스택과 전공 구성을 기준으로 추천되는 학생 연구팀입니다.</p></div></div>
+    <div class="three-col">${state.teams.map(teamSummaryCard).join("")}</div>
+  `;
+}
+
+function renderCompanyInternship() {
+  return `
+    <div class="heading compact-heading"><div><h2>인턴십 연계</h2><p>우수 학생팀을 현장실습, 인턴십, 채용 검토로 연결합니다.</p></div></div>
+    <div class="three-col">
+      <article class="card"><span class="tag orange">하계 4주</span><h3>단기 현장실습</h3><p>문제 수행 후 결과 발표 우수팀을 단기 실습 후보로 등록합니다.</p><button class="primary" data-action="intern-apply" data-id="company-short">인턴십 연계 신청</button></article>
+      <article class="card"><span class="tag blue">학기 중 8주</span><h3>장기 프로젝트형</h3><p>멘토링이 진행된 팀을 장기 검증형 인턴십으로 연결합니다.</p><button class="primary" data-action="intern-apply" data-id="company-long">인턴십 연계 신청</button></article>
+      <article class="card"><span class="tag">채용 검토</span><h3>성과 기반 추천</h3><p>성과물과 멘토 평가를 기반으로 채용 검토 리스트를 구성합니다.</p><button class="secondary" data-route="company-portal:recommendations">추천팀 보기</button></article>
+    </div>
+  `;
+}
+
+function renderMouNda() {
+  return `
+    <div class="heading compact-heading"><div><h2>MOU/NDA 관리</h2><p>정적 MVP에서는 협약과 비밀유지 여부를 mock 상태로 확인합니다.</p></div></div>
+    <div class="three-col">
+      <article class="card"><h3>MOU 상태</h3><p>사업단 표준 협약서 검토 중</p><span class="status warn">검토 중</span></article>
+      <article class="card"><h3>NDA 과제</h3><p>${state.problems.filter((problem) => problem.nda).length}개 실전문제에 NDA 필요 표시가 있습니다.</p><span class="status">관리 가능</span></article>
+      <article class="card"><h3>데이터 제공</h3><p>샘플 데이터, 익명화 데이터, 현장 방문 범위를 문제별로 관리합니다.</p><span class="tag blue">mock</span></article>
+    </div>
+  `;
+}
+
+function renderAdminPortal(section = "dashboard") {
+  const activeSection = section || "dashboard";
+  const content = {
+    dashboard: renderAdminDashboard,
+    "raw-review": renderAdminRawReview,
+    convert: renderAdminConvert,
+    students: renderAdminStudents,
+    companies: renderAdminCompanies,
+    mentors: renderAdminMentors,
+    matching: renderAdminMatching,
+    education: () => unwrapPage(renderEducation()),
+    internship: () => unwrapPage(renderInternship()),
+    kpi: () => unwrapPage(renderKpi()),
+    archive: renderDataArchive,
+  }[activeSection] || renderAdminDashboard;
+
+  return portalShell({
+    eyebrow: "PROGRAM ADMIN PORTAL",
+    title: "관리자 포털",
+    description: "원본문제 접수부터 실전문제 공모, 학생팀 매칭, 멘토링, 성과 KPI까지 사업단 운영 흐름을 관리합니다.",
+    baseRoute: "admin-portal",
+    menu: adminPortalMenu,
+    section: activeSection,
+    actions: `<button class="secondary" type="button" data-action="reset-demo">데모 초기화</button>`,
+    content: content(),
+  });
+}
+
+function renderAdminDashboard() {
+  const reviewing = state.rawProblems.filter((item) => ["접수", "검토 중", "재구성 필요"].includes(item.status)).length;
+  const kpiAverage = Math.round(state.kpis.reduce((sum, [, value, target]) => sum + Math.min(100, (value / target) * 100), 0) / state.kpis.length);
+  return `
+    <div class="heading compact-heading"><div><h2>관리자 대시보드</h2><p>사업단 전체 운영 현황과 주요 병목을 확인합니다.</p></div></div>
+    ${metricCards([
+      ["접수된 원본문제", `${state.rawProblems.length}건`],
+      ["검토 중인 문제", `${reviewing}건`],
+      ["공모 등록된 실전문제", `${state.problems.length}건`],
+      ["지원 팀", `${state.applications.length}팀`],
+      ["등록 멘토", `${state.mentors.length}명`],
+      ["인턴십 연계", `${state.internshipApplications.length}건`],
+      ["KPI 달성률", `${kpiAverage}%`],
+    ])}
+    <section class="panel portal-panel">
+      <h2>운영 흐름</h2>
+      <div class="timeline admin-flow">${["원본문제 접수", "분과 검토", "사업단 재구성", "주제선정위 승인", "실전문제 공모 등록", "학생팀 매칭", "멘토링/성과관리"].map((item) => `<span>${item}</span>`).join("")}</div>
+    </section>
+  `;
+}
+
+function renderAdminRawReview() {
+  return `<div class="heading compact-heading"><div><h2>원본문제 검토</h2><p>접수된 원본문제의 상태를 검토하고 변경합니다.</p></div></div>${rawProblemTable(state.rawProblems, true)}`;
+}
+
+function renderAdminConvert() {
+  return `
+    <div class="heading compact-heading"><div><h2>실전문제 카드 전환</h2><p>승인된 원본문제를 학생 연구팀이 수행 가능한 실전문제 카드로 바꿉니다.</p></div></div>
+    ${rawProblemTable(state.rawProblems, true)}
+    <section class="panel portal-panel"><h2>공모 등록된 실전문제</h2><div class="grid">${state.problems.map((problem) => problemCard(problem, calculateFit(currentProfile(), problem))).join("")}</div></section>
+  `;
+}
+
+function renderAdminStudents() {
+  return `
+    <div class="heading compact-heading"><div><h2>학생/팀 관리</h2><p>학생 프로필과 연구팀 구성을 확인합니다.</p></div></div>
+    <div class="two-col">
+      <section class="panel"><h2>대표 학생 프로필</h2><p>${esc(state.profile.name)} · ${esc(state.profile.university)} · ${esc(state.profile.department)}</p><div class="chip-row">${chip(state.profile.skills, "blue")}</div></section>
+      <section class="panel"><h2>연구팀</h2><div class="grid">${state.teams.map(teamSummaryCard).join("")}</div></section>
+    </div>
+  `;
+}
+
+function renderAdminCompanies() {
+  const rows = state.rawProblems.map((item) => [item.companyName, item.manager, item.industry, item.status]);
+  return `
+    <div class="heading compact-heading"><div><h2>기업 관리</h2><p>등록 기업과 담당자, 문제 접수 상태를 확인합니다.</p></div></div>
+    ${simpleTable(["기업", "담당자", "분야", "상태"], rows)}
+  `;
+}
+
+function renderAdminMentors() {
+  return `
+    <div class="heading compact-heading"><div><h2>멘토 관리</h2><p>등록 멘토와 멘토링 로그를 관리합니다.</p></div></div>
+    <div class="grid">
+      <section class="panel"><h2>등록 멘토</h2><div class="three-col">${state.mentors.map((m) => `<article class="card"><h3>${esc(m.name)}</h3><p>${esc(m.organization)} · ${esc(m.field)}</p><span class="tag">${esc(m.email)}</span></article>`).join("")}</div></section>
+      <section class="panel"><h2>멘토링 로그</h2>${mentorLogTable()}</section>
+    </div>
+  `;
+}
+
+function renderAdminMatching() {
+  return `<div class="heading compact-heading"><div><h2>지원/매칭 관리</h2><p>학생팀 지원 현황과 매칭 상태를 확인합니다.</p></div></div>${applicationTable()}`;
+}
+
+function renderDataArchive() {
+  return `
+    <div class="heading compact-heading"><div><h2>데이터 아카이브</h2><p>문제, 팀, 멘토링, 교육, 인턴십 mock 데이터를 요약합니다.</p></div></div>
+    ${metricCards([
+      ["실전문제 데이터", `${state.problems.length}건`],
+      ["원본문제 데이터", `${state.rawProblems.length}건`],
+      ["팀 데이터", `${state.teams.length}건`],
+      ["멘토링 로그", `${state.mentorLogs.length}건`],
+      ["교육 신청", `${state.courseApplications.length}건`],
+      ["인턴십 신청", `${state.internshipApplications.length}건`],
+    ])}
+  `;
+}
+
+function simpleTable(headers, rows) {
+  return `
+    <div class="table-scroll"><table>
+      <thead><tr>${headers.map((head) => `<th>${esc(head)}</th>`).join("")}</tr></thead>
+      <tbody>${rows.map((row) => `<tr>${row.map((cell) => `<td>${esc(cell)}</td>`).join("")}</tr>`).join("")}</tbody>
+    </table></div>
+  `;
+}
+
+function renderAbout() {
+  return `
+    <main class="page">
+      <section class="heading">
+        <div>
+          <p class="eyebrow" style="color: var(--teal-dark)">PROGRAM OVERVIEW</p>
+          <h1>사업 소개</h1>
+          <p>과제 JOB은 산업체 실전문제를 학부생 연구팀이 수행 가능한 과제로 재구성하고, 멘토링·특화교육·인턴십·성과관리로 연결하는 플랫폼입니다.</p>
+        </div>
+      </section>
+      <section class="panel portal-panel">
+        <h2>플랫폼 운영 구조</h2>
+        <div class="timeline admin-flow">${["기업 문제 등록", "사업단 과제 재구성", "학생팀 매칭", "멘토링", "성과물 제출", "포트폴리오·채용 연계"].map((item) => `<span>${item}</span>`).join("")}</div>
+      </section>
+      <section class="section" style="padding-top: 24px">
+        <div class="two-col">
+          ${fields.map((field) => `<article class="card"><span class="tag orange">특화 분야</span><h3 style="margin-top: 12px">${esc(field)}</h3><p>산업체 수요를 실전문제로 발굴하고 학생 연구팀, 멘토, 교육 과정과 연결합니다.</p></article>`).join("")}
         </div>
       </section>
     </main>
@@ -239,7 +648,7 @@ function renderProblems() {
           <h1>실전문제 공고</h1>
           <p>일반 채용공고가 아니라 산업체 문제를 학부생 연구팀이 수행 가능한 카드로 재구성한 공모 화면입니다.</p>
         </div>
-        <button class="primary" type="button" data-route="team">팀 매칭 시작</button>
+        <button class="primary" type="button" data-route="student-portal:team">팀 매칭 시작</button>
       </div>
       <div class="layout">
         <aside class="panel filter-stack">
@@ -437,6 +846,21 @@ function teamCard(team) {
       <div class="chip-row">${chip(team.skills, "blue")}</div>
       <p><b>지원 과제:</b> ${esc(problem.title)}</p>
       <button class="primary" type="button" data-action="submit-team" data-team="${team.id}" data-id="${problem.id}">팀으로 지원하기</button>
+    </article>
+  `;
+}
+
+function teamSummaryCard(team) {
+  const problem = problemById(team.problemId);
+  return `
+    <article class="card">
+      <span class="tag orange">${esc(team.preferredField)}</span>
+      <h3 style="margin-top: 12px">${esc(team.name)}</h3>
+      <p><b>대표:</b> ${esc(team.leader)} · <b>소속:</b> ${esc(team.university)}</p>
+      <p><b>전공 구성:</b> ${esc(team.majors)}</p>
+      <div class="chip-row">${chip(team.skills, "blue")}</div>
+      <p><b>관심 과제:</b> ${esc(problem.title)}</p>
+      <span class="score">추천팀</span>
     </article>
   `;
 }
@@ -669,10 +1093,10 @@ function renderMypage() {
   const user = currentUser(state);
   if (!user) return renderLogin();
   const content = {
-    student: `<p>내 역량 프로필, 지원 과제, 팀 정보, 추천 과제를 확인합니다.</p><div class="button-row"><button class="primary" data-route="profile">역량 프로필</button><button class="secondary" data-route="team">팀 정보</button><button class="secondary" data-route="problems">추천 과제</button></div>`,
-    company: `<p>등록한 원본문제와 검토 상태를 확인하고 멘토 등록으로 이어갑니다.</p><div class="button-row"><button class="primary" data-route="company">산업체 센터</button><button class="secondary" data-route="mentor">멘토 등록</button></div>`,
-    mentor: `<p>담당 과제와 멘토링 일지를 관리합니다.</p><button class="primary" data-route="mentor">멘토 센터</button>`,
-    admin: `<p>사업단 관리자 대시보드로 이동합니다.</p><button class="primary" data-route="admin">관리자 대시보드</button>`,
+    student: `<p>내 역량 프로필, 지원 과제, 팀 정보, 추천 과제를 확인합니다.</p><div class="button-row"><button class="primary" data-route="student-portal">학생 포털</button><button class="secondary" data-route="student-portal:profile">역량 프로필</button><button class="secondary" data-route="student-portal:recommendations">추천 과제</button></div>`,
+    company: `<p>등록한 원본문제와 검토 상태를 확인하고 멘토 등록으로 이어갑니다.</p><div class="button-row"><button class="primary" data-route="company-portal">기업 포털</button><button class="secondary" data-route="company-portal:mentor">멘토 등록</button></div>`,
+    mentor: `<p>담당 과제와 멘토링 일지를 관리합니다.</p><button class="primary" data-route="company-portal:mentor">멘토 관련 화면</button>`,
+    admin: `<p>사업단 관리자 대시보드로 이동합니다.</p><button class="primary" data-route="admin-portal">관리자 포털</button>`,
   }[user.role];
   return `<main class="page"><section class="panel"><h1>${esc(user.name)}님의 마이페이지</h1><span class="tag orange">${esc(user.role)}</span>${content}</section></main>`;
 }
@@ -753,14 +1177,14 @@ function bindSubmit(event) {
     const result = login(state, get("email"), get("password"));
     if (!result.ok) return showToast(result.message);
     persist("로그인되었습니다.");
-    go("mypage");
+    go(defaultRouteForRole(result.user.role));
   }
 
   if (form.id === "signupForm") {
     const result = signup(state, { name: get("name"), email: get("email"), password: get("password"), role: get("role") });
     if (!result.ok) return showToast(result.message);
     persist("회원가입이 완료되었습니다.");
-    go("mypage");
+    go(defaultRouteForRole(result.user.role));
   }
 }
 
@@ -828,7 +1252,7 @@ function applyTeamToProblem(problemId) {
   if (!state.teams.length) {
     sessionStorage.setItem("selected-problem", problemId);
     showToast("먼저 팀을 생성해 주세요.");
-    go("team");
+    go("student-portal:team");
     return;
   }
   return submitApplication(state.teams[0].id, problemId);

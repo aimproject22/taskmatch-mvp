@@ -263,6 +263,136 @@ button {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
+.role-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.role-card {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  min-height: 250px;
+  padding: 28px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: var(--shadow);
+}
+
+.role-card h3 {
+  margin: 0;
+  color: var(--ink-strong);
+  font-size: 30px;
+}
+
+.role-card p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 16px;
+  line-height: 1.7;
+}
+
+.role-card button {
+  justify-self: start;
+  margin-top: auto;
+}
+
+.portal-page {
+  padding-top: 26px;
+}
+
+.portal-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 24px;
+  align-items: end;
+  margin-bottom: 18px;
+  padding: 26px;
+  border-radius: 8px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--navy), #0b5e69 62%, var(--teal-dark));
+  box-shadow: var(--shadow);
+}
+
+.portal-hero h1 {
+  margin: 0;
+  color: #fff;
+  font-size: 36px;
+}
+
+.portal-hero p {
+  max-width: 740px;
+  margin: 12px 0 0;
+  color: rgba(255, 255, 255, 0.8);
+  line-height: 1.65;
+}
+
+.portal-layout {
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.portal-menu {
+  position: sticky;
+  top: 94px;
+  display: grid;
+  gap: 6px;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 8px 24px rgba(14, 31, 51, 0.05);
+}
+
+.portal-menu button {
+  min-height: 40px;
+  padding: 9px 10px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: var(--muted);
+  background: transparent;
+  text-align: left;
+  font-weight: 800;
+}
+
+.portal-menu button:hover,
+.portal-menu button.active {
+  color: var(--ink-strong);
+  background: #edf4f6;
+}
+
+.portal-content {
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+}
+
+.compact-heading {
+  margin-bottom: 2px;
+}
+
+.compact-heading h2 {
+  margin: 0;
+  color: var(--ink-strong);
+  font-size: 28px;
+}
+
+.portal-panel {
+  margin-top: 2px;
+}
+
+.portal-stat-grid {
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+}
+
+.admin-flow {
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+
 .layout {
   display: grid;
   grid-template-columns: 270px minmax(0, 1fr);
@@ -593,9 +723,26 @@ th {
 
   .hero-inner,
   .layout,
+  .portal-layout,
+  .role-grid,
   .two-col,
   .three-col {
     grid-template-columns: 1fr;
+  }
+
+  .portal-hero {
+    display: grid;
+  }
+
+  .portal-menu {
+    position: static;
+    display: flex;
+    overflow-x: auto;
+  }
+
+  .portal-menu button {
+    flex: 0 0 auto;
+    white-space: nowrap;
   }
 
   .stat-grid {
@@ -626,13 +773,15 @@ th {
   }
 
   .hero h1,
-  .heading h1 {
+  .heading h1,
+  .portal-hero h1 {
     font-size: 30px;
   }
 
   .stat-grid,
   .meta-grid,
   .form-grid,
+  .role-grid,
   .timeline {
     grid-template-columns: 1fr;
   }

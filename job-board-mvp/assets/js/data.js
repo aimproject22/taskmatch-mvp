@@ -2,15 +2,11 @@ export const STORAGE_KEY = "solve-x-taskjob-state-v1";
 
 export const routes = [
   { id: "home", label: "홈" },
-  { id: "problems", label: "실전문제 공고" },
-  { id: "profile", label: "역량 프로필" },
-  { id: "team", label: "팀 매칭" },
-  { id: "company", label: "산업체 센터" },
-  { id: "mentor", label: "멘토 센터" },
-  { id: "education", label: "특화교육" },
-  { id: "internship", label: "인턴십" },
+  { id: "student-portal", label: "학생 포털" },
+  { id: "company-portal", label: "기업 포털" },
+  { id: "admin-portal", label: "관리자 포털" },
+  { id: "about", label: "사업 소개" },
   { id: "kpi", label: "성과·KPI" },
-  { id: "admin", label: "관리자" },
 ];
 
 export const fields = [
