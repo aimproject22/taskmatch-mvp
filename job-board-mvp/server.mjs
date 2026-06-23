@@ -38,5 +38,5 @@ createServer(async (request, response) => {
     response.end("Not found");
   }
 }).listen(port, "127.0.0.1", () => {
-  console.log(`과제잡 MVP running at http://127.0.0.1:${port}`);
+  console.log(`과제 JOB MVP running at http://127.0.0.1:${port}`);
 });

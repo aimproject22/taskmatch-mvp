@@ -65,8 +65,7 @@ button {
 .brand {
   display: flex;
   align-items: center;
-  gap: 10px;
-  min-width: 190px;
+  min-width: 218px;
   padding: 0;
   border: 0;
   background: transparent;
@@ -74,27 +73,12 @@ button {
   text-align: left;
 }
 
-.brand-icon {
-  display: grid;
-  place-items: center;
-  width: 42px;
-  height: 42px;
-  border-radius: 8px;
-  color: #fff;
-  background: var(--orange);
-  font-weight: 900;
-}
-
-.brand strong,
-.brand small {
+.brand-logo {
   display: block;
-  white-space: nowrap;
-}
-
-.brand small {
-  margin-top: 2px;
-  color: var(--muted);
-  font-size: 12px;
+  width: 198px;
+  height: 50px;
+  object-fit: contain;
+  object-position: left center;
 }
 
 .nav {
@@ -716,7 +700,11 @@ td {
     min-width: 0;
   }
 
-  .brand small,
+  .brand-logo {
+    width: 156px;
+    height: 42px;
+  }
+
   .post-button {
     display: none;
   }
