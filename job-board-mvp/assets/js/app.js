@@ -111,13 +111,14 @@ function chip(items, tone = "") {
 function header() {
   const user = currentUser(state);
   const activeTopRoute = topRouteForRoute(route().split(":")[0]);
+  const visibleRoutes = user ? routes.filter((item) => !["login", "signup"].includes(item.id)) : routes;
   return `
     <header class="site-header">
       <button class="brand" type="button" data-route="home" aria-label="과제 JOB 홈으로 이동">
         <img class="brand-logo" src="assets/img/logo.png" alt="과제 JOB" onerror="this.outerHTML='<span class=&quot;brand-fallback&quot;>과제 JOB</span>'" />
       </button>
       <nav class="nav" aria-label="주요 메뉴">
-        ${routes
+        ${visibleRoutes
           .map(
             (item) => `
               <button type="button" class="${activeTopRoute === item.id ? "active" : ""}" data-route="${item.id}">
@@ -131,7 +132,7 @@ function header() {
         ${
           user
             ? `<button class="secondary" type="button" data-route="mypage">마이페이지</button><button class="primary" type="button" data-action="logout">로그아웃</button>`
-            : `<button class="secondary" type="button" data-route="login">로그인</button><button class="primary" type="button" data-route="signup">회원가입</button>`
+            : ""
         }
       </div>
     </header>
@@ -191,7 +192,7 @@ function renderHome() {
             </div>
           </div>
           <aside class="hero-panel">
-            <div class="flow-row"><strong>01 원본문제 접수</strong><span>산업체 기술 애로를 사업단이 접수합니다.</span></div>
+            <div class="flow-row"><strong>01 산업체 원본문제 접수</strong><span>산업체 기술 애로를 사업단이 접수합니다.</span></div>
             <div class="flow-row"><strong>02 사업단 재구성</strong><span>학부생 수행 가능한 실전문제 카드로 전환합니다.</span></div>
             <div class="flow-row"><strong>03 팀 매칭·멘토링</strong><span>AI 적합도와 멘토링으로 수행 가능성을 높입니다.</span></div>
             <div class="flow-row"><strong>04 성과·인턴십 연계</strong><span>결과물, 발표, 지재권, 인턴십으로 확장합니다.</span></div>
@@ -202,7 +203,7 @@ function renderHome() {
       <section class="section">
         <div class="heading">
           <div>
-            <p class="eyebrow" style="color: var(--teal-dark)">ROLE PORTALS</p>
+            <p class="eyebrow" style="color: var(--primary-blue)">ROLE PORTALS</p>
             <h2>역할별 포털 선택</h2>
           </div>
           <p>처음 접속한 사용자가 자신의 역할을 고르면 필요한 기능만 모아진 대시보드로 이동합니다.</p>
@@ -224,7 +225,7 @@ function renderHome() {
       <section class="section">
         <div class="heading">
           <div>
-            <p class="eyebrow" style="color: var(--teal-dark)">SPECIALIZED FIELDS</p>
+            <p class="eyebrow" style="color: var(--primary-blue)">SPECIALIZED FIELDS</p>
             <h2>4대 특화 분야</h2>
           </div>
           <p>산업체 수요와 지역 특화 역량을 중심으로 실전문제를 발굴합니다.</p>
@@ -234,7 +235,7 @@ function renderHome() {
             .map(
               (field) => `
                 <article class="card">
-                  <span class="tag orange">특화 분야</span>
+                  <span class="tag blue">특화 분야</span>
                   <h3 style="margin-top: 12px">${esc(field)}</h3>
                   <p>실전문제 발굴, 팀 매칭, 멘토링, 특화교육, 인턴십까지 연계되는 집중 분야입니다.</p>
                 </article>
@@ -247,7 +248,7 @@ function renderHome() {
       <section class="section">
         <div class="heading">
           <div>
-            <p class="eyebrow" style="color: var(--teal-dark)">RECOMMENDED PROBLEMS</p>
+            <p class="eyebrow" style="color: var(--primary-blue)">RECOMMENDED PROBLEMS</p>
             <h2>추천 실전문제</h2>
           </div>
           <button class="secondary" type="button" data-route="student-portal:problems">전체 보기</button>
@@ -266,7 +267,7 @@ function renderHome() {
 function roleCard(title, description, routeId, buttonLabel) {
   return `
     <article class="role-card">
-      <span class="tag orange">${esc(title)}</span>
+      <span class="tag blue">${esc(title)}</span>
       <h3>${esc(title)}</h3>
       <p>${esc(description)}</p>
       <button class="primary" type="button" data-route="${routeId}">${esc(buttonLabel)}</button>
@@ -385,7 +386,7 @@ function renderStudentOutcomes() {
   return `
     <div class="heading compact-heading"><div><h2>내 성과물</h2><p>실전문제 수행 결과를 포트폴리오, 발표, 인턴십 연계로 축적하는 화면입니다.</p></div></div>
     <div class="three-col">
-      <article class="card"><span class="tag orange">포트폴리오</span><h3>프로젝트 리포트</h3><p>${esc(state.profile.projects)}</p></article>
+      <article class="card"><span class="tag blue">포트폴리오</span><h3>프로젝트 리포트</h3><p>${esc(state.profile.projects)}</p></article>
       <article class="card"><span class="tag blue">성과</span><h3>분석 데이터셋</h3><p>팀 과제 수행 결과물, 시연 자료, 발표 자료를 아카이브합니다.</p></article>
       <article class="card"><span class="tag">연계</span><h3>취업·인턴십 연결</h3><p>산업체 피드백과 멘토 평가를 기반으로 인턴십 후보로 연결합니다.</p></article>
     </div>
@@ -457,7 +458,7 @@ function renderCompanyInternship() {
   return `
     <div class="heading compact-heading"><div><h2>인턴십 연계</h2><p>우수 학생팀을 현장실습, 인턴십, 채용 검토로 연결합니다.</p></div></div>
     <div class="three-col">
-      <article class="card"><span class="tag orange">하계 4주</span><h3>단기 현장실습</h3><p>문제 수행 후 결과 발표 우수팀을 단기 실습 후보로 등록합니다.</p><button class="primary" data-action="intern-apply" data-id="company-short">인턴십 연계 신청</button></article>
+      <article class="card"><span class="tag blue">하계 4주</span><h3>단기 현장실습</h3><p>문제 수행 후 결과 발표 우수팀을 단기 실습 후보로 등록합니다.</p><button class="primary" data-action="intern-apply" data-id="company-short">인턴십 연계 신청</button></article>
       <article class="card"><span class="tag blue">학기 중 8주</span><h3>장기 프로젝트형</h3><p>멘토링이 진행된 팀을 장기 검증형 인턴십으로 연결합니다.</p><button class="primary" data-action="intern-apply" data-id="company-long">인턴십 연계 신청</button></article>
       <article class="card"><span class="tag">채용 검토</span><h3>성과 기반 추천</h3><p>성과물과 멘토 평가를 기반으로 채용 검토 리스트를 구성합니다.</p><button class="secondary" data-route="company-portal:recommendations">추천팀 보기</button></article>
     </div>
@@ -494,7 +495,7 @@ function renderAdminPortal(section = "dashboard") {
   return portalShell({
     eyebrow: "PROGRAM ADMIN PORTAL",
     title: "관리자 포털",
-    description: "원본문제 접수부터 실전문제 공모, 학생팀 매칭, 멘토링, 성과 KPI까지 사업단 운영 흐름을 관리합니다.",
+    description: "산업체 원본문제 접수부터 실전문제 공모, 학생팀 매칭, 멘토링, 성과 KPI와 인턴십·진로 연계까지 관리합니다.",
     baseRoute: "admin-portal",
     menu: adminPortalMenu,
     section: activeSection,
@@ -519,7 +520,7 @@ function renderAdminDashboard() {
     ])}
     <section class="panel portal-panel">
       <h2>운영 흐름</h2>
-      <div class="timeline admin-flow">${["원본문제 접수", "분과 검토", "사업단 재구성", "주제선정위 승인", "실전문제 공모 등록", "학생팀 매칭", "멘토링/성과관리"].map((item) => `<span>${item}</span>`).join("")}</div>
+      <div class="timeline admin-flow">${["산업체 원본문제 접수", "분과 검토", "사업단 재구성", "주제선정위 승인", "실전문제 공모 등록", "학생팀 매칭", "멘토링·성과관리", "인턴십·진로 연계"].map((item) => `<span>${item}</span>`).join("")}</div>
     </section>
   `;
 }
@@ -596,7 +597,7 @@ function renderAbout() {
     <main class="page">
       <section class="heading">
         <div>
-          <p class="eyebrow" style="color: var(--teal-dark)">PROGRAM OVERVIEW</p>
+          <p class="eyebrow" style="color: var(--primary-blue)">PROGRAM OVERVIEW</p>
           <h1>사업 소개</h1>
           <p>과제 JOB은 산업체 실전문제를 학부생 연구팀이 수행 가능한 과제로 재구성하고, 멘토링·특화교육·인턴십·성과관리로 연결하는 플랫폼입니다.</p>
         </div>
@@ -607,7 +608,7 @@ function renderAbout() {
       </section>
       <section class="section" style="padding-top: 24px">
         <div class="two-col">
-          ${fields.map((field) => `<article class="card"><span class="tag orange">특화 분야</span><h3 style="margin-top: 12px">${esc(field)}</h3><p>산업체 수요를 실전문제로 발굴하고 학생 연구팀, 멘토, 교육 과정과 연결합니다.</p></article>`).join("")}
+          ${fields.map((field) => `<article class="card"><span class="tag blue">특화 분야</span><h3 style="margin-top: 12px">${esc(field)}</h3><p>산업체 수요를 실전문제로 발굴하고 학생 연구팀, 멘토, 교육 과정과 연결합니다.</p></article>`).join("")}
         </div>
       </section>
     </main>
@@ -644,7 +645,7 @@ function renderProblems() {
     <main class="page">
       <div class="heading">
         <div>
-          <p class="eyebrow" style="color: var(--teal-dark)">PRACTICAL PROBLEM CARDS</p>
+          <p class="eyebrow" style="color: var(--primary-blue)">PRACTICAL PROBLEM CARDS</p>
           <h1>실전문제 공고</h1>
           <p>일반 채용공고가 아니라 산업체 문제를 학부생 연구팀이 수행 가능한 카드로 재구성한 공모 화면입니다.</p>
         </div>
@@ -689,7 +690,7 @@ function problemCard(problem, fit) {
     <article class="problem-card">
       <div class="problem-head">
         <div>
-          <span class="tag orange">${esc(problem.field)}</span>
+          <span class="tag blue">${esc(problem.field)}</span>
           <span class="tag">${esc(problem.hostType)}</span>
           <h3>${esc(problem.title)}</h3>
           <p>${esc(problem.summary)}</p>
@@ -722,7 +723,7 @@ function renderProblemModal(problem) {
       <article class="modal" role="dialog" aria-modal="true" aria-label="실전문제 상세" onclick="event.stopPropagation()">
         <div class="modal-head">
           <div>
-            <span class="tag orange">${esc(problem.field)}</span>
+            <span class="tag blue">${esc(problem.field)}</span>
             <h2 style="margin: 10px 0 0">${esc(problem.title)}</h2>
           </div>
           <button class="secondary" type="button" data-action="close-modal">닫기</button>
@@ -754,7 +755,7 @@ function renderProfile() {
     <main class="page">
       <div class="heading">
         <div>
-          <p class="eyebrow" style="color: var(--teal-dark)">STUDENT CAPABILITY PROFILE</p>
+          <p class="eyebrow" style="color: var(--primary-blue)">STUDENT CAPABILITY PROFILE</p>
           <h1>역량 프로필 등록</h1>
           <p>전공, 기술, 장비, 프로젝트 경험을 등록하면 실전문제별 AI 적합도 점수가 계산됩니다.</p>
         </div>
@@ -779,7 +780,7 @@ function renderProfile() {
           <section class="panel">
             <h2>내 역량 프로필 요약</h2>
             <p>${esc(p.university)} · ${esc(p.department)} · ${esc(p.year)}</p>
-            <div class="chip-row">${chip(p.interests, "orange")}${chip(p.skills, "blue")}${chip(p.equipment)}</div>
+            <div class="chip-row">${chip(p.interests, "blue")}${chip(p.skills, "blue")}${chip(p.equipment)}</div>
           </section>
           <section class="panel">
             <h2>프로필 기반 추천 실전문제</h2>
@@ -804,7 +805,7 @@ function renderTeam() {
   return `
     <main class="page">
       <div class="heading">
-        <div><p class="eyebrow" style="color: var(--teal-dark)">TEAM MATCHING</p><h1>팀 매칭</h1><p>팀 역량을 구성하고 실전문제에 팀 단위로 지원합니다.</p></div>
+        <div><p class="eyebrow" style="color: var(--primary-blue)">TEAM MATCHING</p><h1>팀 매칭</h1><p>팀 역량을 구성하고 실전문제에 팀 단위로 지원합니다.</p></div>
       </div>
       <div class="two-col">
         <form class="panel form-grid" id="teamForm">
@@ -839,7 +840,7 @@ function teamCard(team) {
   const problem = problemById(team.problemId);
   return `
     <article class="card">
-      <span class="tag orange">${esc(team.preferredField)}</span>
+      <span class="tag blue">${esc(team.preferredField)}</span>
       <h3 style="margin-top: 12px">${esc(team.name)}</h3>
       <p><b>대표:</b> ${esc(team.leader)} · <b>소속:</b> ${esc(team.university)}</p>
       <p><b>전공 구성:</b> ${esc(team.majors)}</p>
@@ -854,7 +855,7 @@ function teamSummaryCard(team) {
   const problem = problemById(team.problemId);
   return `
     <article class="card">
-      <span class="tag orange">${esc(team.preferredField)}</span>
+      <span class="tag blue">${esc(team.preferredField)}</span>
       <h3 style="margin-top: 12px">${esc(team.name)}</h3>
       <p><b>대표:</b> ${esc(team.leader)} · <b>소속:</b> ${esc(team.university)}</p>
       <p><b>전공 구성:</b> ${esc(team.majors)}</p>
@@ -869,7 +870,7 @@ function renderCompany() {
   return `
     <main class="page">
       <div class="heading">
-        <div><p class="eyebrow" style="color: var(--teal-dark)">COMPANY CENTER</p><h1>산업체 센터</h1><p>산업체가 원본문제를 등록하고 검토 상태를 확인하는 화면입니다.</p></div>
+        <div><p class="eyebrow" style="color: var(--primary-blue)">COMPANY CENTER</p><h1>산업체 센터</h1><p>산업체가 원본문제를 등록하고 검토 상태를 확인하는 화면입니다.</p></div>
       </div>
       <div class="two-col">
         <form class="panel form-grid" id="rawProblemForm">
@@ -943,12 +944,12 @@ function renderAdmin() {
   return `
     <main class="page">
       <div class="heading">
-        <div><p class="eyebrow" style="color: var(--teal-dark)">PROGRAM ADMIN</p><h1>관리자 대시보드</h1><p>사업단 관리자가 원본문제 접수 → 분과 검토 → 재구성 → 주제선정위 승인 → 공모 등록 → 팀 매칭 흐름을 관리합니다.</p></div>
+        <div><p class="eyebrow" style="color: var(--primary-blue)">PROGRAM ADMIN</p><h1>관리자 대시보드</h1><p>사업단 관리자가 산업체 원본문제 접수 → 분과 검토 → 사업단 재구성 → 주제선정위 승인 → 실전문제 공모 등록 → 학생팀 매칭 → 멘토링·성과관리 → 인턴십·진로 연계 흐름을 관리합니다.</p></div>
         <button class="secondary" type="button" data-action="reset-demo">데모 초기화</button>
       </div>
       <div class="stat-grid">${dashboard.map(([label, value]) => `<div class="stat"><strong>${value}</strong><span>${label}</span></div>`).join("")}</div>
       <section class="section" style="padding-bottom: 24px">
-        <div class="timeline">${["원본문제 접수", "분과 검토", "재구성", "주제선정위 승인", "공모 등록", "팀 매칭"].map((item) => `<span>${item}</span>`).join("")}</div>
+        <div class="timeline admin-flow">${["산업체 원본문제 접수", "분과 검토", "사업단 재구성", "주제선정위 승인", "실전문제 공모 등록", "학생팀 매칭", "멘토링·성과관리", "인턴십·진로 연계"].map((item) => `<span>${item}</span>`).join("")}</div>
       </section>
       <div class="grid">
         <section class="panel"><h2>원본문제 검토</h2>${rawProblemTable(state.rawProblems, true)}</section>
@@ -967,7 +968,7 @@ function applicationTable() {
 function renderMentor() {
   return `
     <main class="page">
-      <div class="heading"><div><p class="eyebrow" style="color: var(--teal-dark)">MENTOR CENTER</p><h1>멘토 센터</h1><p>멘토 프로필을 등록하고 멘토링 일지를 관리합니다.</p></div></div>
+      <div class="heading"><div><p class="eyebrow" style="color: var(--primary-blue)">MENTOR CENTER</p><h1>멘토 센터</h1><p>멘토 프로필을 등록하고 멘토링 일지를 관리합니다.</p></div></div>
       <div class="two-col">
         <form class="panel form-grid" id="mentorForm">
           ${input("name", "이름")}
@@ -1003,12 +1004,12 @@ function renderEducation() {
   const courses = fields.flatMap((field) => modules.map((module) => ({ id: `${field}-${module}`, field, module, title: `${field} ${module} 과정`, method: "온라인 2회 + 현장 워크숍 1회", result: "미니 프로젝트 리포트" })));
   return `
     <main class="page">
-      <div class="heading"><div><p class="eyebrow" style="color: var(--teal-dark)">SPECIALIZED EDUCATION</p><h1>특화교육</h1><p>4대 분야와 4종 모듈을 연결한 교육 신청 mock UI입니다.</p></div></div>
+      <div class="heading"><div><p class="eyebrow" style="color: var(--primary-blue)">SPECIALIZED EDUCATION</p><h1>특화교육</h1><p>4대 분야와 4종 모듈을 연결한 교육 신청 mock UI입니다.</p></div></div>
       <div class="three-col">
         ${courses
           .map((course) => {
             const applied = state.courseApplications.includes(course.id);
-            return `<article class="card"><span class="tag orange">${esc(course.field)}</span><h3 style="margin-top: 12px">${esc(course.title)}</h3><p><b>모듈:</b> ${esc(course.module)}</p><p><b>운영:</b> ${esc(course.method)}</p><p><b>결과물:</b> ${esc(course.result)}</p><button class="${applied ? "secondary" : "primary"}" type="button" data-action="course-apply" data-id="${esc(course.id)}">${applied ? "신청 완료" : "신청"}</button></article>`;
+            return `<article class="card"><span class="tag blue">${esc(course.field)}</span><h3 style="margin-top: 12px">${esc(course.title)}</h3><p><b>모듈:</b> ${esc(course.module)}</p><p><b>운영:</b> ${esc(course.method)}</p><p><b>결과물:</b> ${esc(course.result)}</p><button class="${applied ? "secondary" : "primary"}" type="button" data-action="course-apply" data-id="${esc(course.id)}">${applied ? "신청 완료" : "신청"}</button></article>`;
           })
           .join("")}
       </div>
@@ -1025,7 +1026,7 @@ function renderInternship() {
   const hosts = ["KIMS", "RIST", "KICET", "ETRI", "대구TP", "경북TP", "DIP", "KATECH"];
   return `
     <main class="page">
-      <div class="heading"><div><p class="eyebrow" style="color: var(--teal-dark)">INTERNSHIP TRACKS</p><h1>인턴십</h1><p>실전문제 수행 성과를 인턴십과 채용 검토로 연결합니다.</p></div></div>
+      <div class="heading"><div><p class="eyebrow" style="color: var(--primary-blue)">INTERNSHIP TRACKS</p><h1>인턴십</h1><p>실전문제 수행 성과를 인턴십과 채용 검토로 연결합니다.</p></div></div>
       <div class="three-col">${tracks.map(([name, desc]) => `<article class="card"><span class="tag blue">${esc(name)}</span><p>${esc(desc)}</p></article>`).join("")}</div>
       <section class="section">
         <div class="three-col">
@@ -1045,7 +1046,7 @@ function renderInternship() {
 function renderKpi() {
   return `
     <main class="page">
-      <div class="heading"><div><p class="eyebrow" style="color: var(--teal-dark)">PERFORMANCE DASHBOARD</p><h1>성과·KPI</h1><p>성과 지표: 실전문제 40건, 참여 학생 200명, 연구팀·성과물·인턴십 연계를 발표용 대시보드 형태로 시각화합니다.</p></div></div>
+      <div class="heading"><div><p class="eyebrow" style="color: var(--primary-blue)">PERFORMANCE DASHBOARD</p><h1>성과·KPI</h1><p>성과 지표: 실전문제 40건, 참여 학생 200명, 연구팀·성과물·인턴십 연계를 발표용 대시보드 형태로 시각화합니다.</p></div></div>
       <div class="two-col">
         ${state.kpis
           .map(([label, value, target]) => {
@@ -1098,7 +1099,7 @@ function renderMypage() {
     mentor: `<p>담당 과제와 멘토링 일지를 관리합니다.</p><button class="primary" data-route="company-portal:mentor">멘토 관련 화면</button>`,
     admin: `<p>사업단 관리자 대시보드로 이동합니다.</p><button class="primary" data-route="admin-portal">관리자 포털</button>`,
   }[user.role];
-  return `<main class="page"><section class="panel"><h1>${esc(user.name)}님의 마이페이지</h1><span class="tag orange">${esc(user.role)}</span>${content}</section></main>`;
+  return `<main class="page"><section class="panel"><h1>${esc(user.name)}님의 마이페이지</h1><span class="tag blue">${esc(user.role)}</span>${content}</section></main>`;
 }
 
 function bindSubmit(event) {

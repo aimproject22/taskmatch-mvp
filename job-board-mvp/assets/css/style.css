@@ -1,19 +1,26 @@
 :root {
-  --ink: #122033;
-  --ink-strong: #061426;
-  --muted: #63758a;
-  --line: #dce6ef;
-  --soft: #f5f8fb;
+  --primary-blue: #005bac;
+  --deep-blue: #003b73;
+  --navy: #0b1f3a;
+  --sky-blue: #eaf4ff;
+  --soft-blue: #d6e9ff;
+  --accent-blue: #2f80ed;
+  --accent-orange: #ff8a00;
+  --gray-bg: #f5f7fa;
   --white: #fff;
-  --teal: #0f8f88;
-  --teal-dark: #08756f;
-  --navy: #082a4d;
-  --orange: #f47a21;
-  --orange-soft: #fff1e6;
-  --blue-soft: #edf4ff;
-  --green-soft: #e7f7f3;
+  --text-main: #102033;
+  --text-sub: #5b6b7c;
+  --ink: var(--text-main);
+  --ink-strong: #07182d;
+  --muted: var(--text-sub);
+  --line: #d8e5f3;
+  --soft: var(--gray-bg);
+  --orange: var(--accent-orange);
+  --orange-soft: #fff3df;
+  --blue-soft: var(--sky-blue);
+  --green-soft: #eaf7ff;
   --red-soft: #fff0f2;
-  --shadow: 0 18px 48px rgba(14, 31, 51, 0.12);
+  --shadow: 0 18px 48px rgba(11, 31, 58, 0.12);
   --max: 1220px;
 }
 
@@ -50,7 +57,7 @@ button {
   gap: 16px;
   min-height: 72px;
   padding: 12px max(18px, calc((100vw - var(--max)) / 2));
-  border-bottom: 1px solid rgba(220, 230, 239, 0.94);
+  border-bottom: 1px solid rgba(214, 233, 255, 0.94);
   background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(14px);
 }
@@ -104,8 +111,8 @@ button {
 
 .nav button:hover,
 .nav button.active {
-  color: var(--ink-strong);
-  background: #edf4f6;
+  color: var(--primary-blue);
+  background: var(--sky-blue);
 }
 
 .auth-actions {
@@ -117,8 +124,13 @@ button {
 .primary {
   padding: 9px 14px;
   color: #fff;
-  background: var(--teal-dark);
-  border-color: var(--teal-dark);
+  background: var(--primary-blue);
+  border-color: var(--primary-blue);
+}
+
+.primary:hover {
+  background: var(--deep-blue);
+  border-color: var(--deep-blue);
 }
 
 .secondary,
@@ -149,7 +161,7 @@ button {
   position: relative;
   overflow: hidden;
   background:
-    linear-gradient(90deg, rgba(6, 20, 38, 0.94), rgba(6, 20, 38, 0.78) 48%, rgba(6, 20, 38, 0.22)),
+    linear-gradient(90deg, rgba(11, 31, 58, 0.96), rgba(0, 59, 115, 0.84) 52%, rgba(0, 91, 172, 0.22)),
     url("../hero-platform.png") center / cover;
   color: #fff;
 }
@@ -167,7 +179,7 @@ button {
 
 .eyebrow {
   margin: 0 0 12px;
-  color: #aef2e7;
+  color: #b9dcff;
   font-size: 13px;
   font-weight: 900;
 }
@@ -275,9 +287,9 @@ button {
   gap: 14px;
   min-height: 250px;
   padding: 28px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--soft-blue);
   border-radius: 8px;
-  background: #fff;
+  background: linear-gradient(180deg, #fff, #f8fbff);
   box-shadow: var(--shadow);
 }
 
@@ -312,7 +324,7 @@ button {
   padding: 26px;
   border-radius: 8px;
   color: #fff;
-  background: linear-gradient(135deg, var(--navy), #0b5e69 62%, var(--teal-dark));
+  background: linear-gradient(135deg, var(--navy), var(--deep-blue) 58%, var(--primary-blue));
   box-shadow: var(--shadow);
 }
 
@@ -342,7 +354,7 @@ button {
   display: grid;
   gap: 6px;
   padding: 12px;
-  border: 1px solid var(--line);
+  border: 1px solid var(--soft-blue);
   border-radius: 8px;
   background: #fff;
   box-shadow: 0 8px 24px rgba(14, 31, 51, 0.05);
@@ -361,8 +373,8 @@ button {
 
 .portal-menu button:hover,
 .portal-menu button.active {
-  color: var(--ink-strong);
-  background: #edf4f6;
+  color: var(--primary-blue);
+  background: var(--sky-blue);
 }
 
 .portal-content {
@@ -407,7 +419,7 @@ button {
   border: 1px solid var(--line);
   border-radius: 8px;
   background: #fff;
-  box-shadow: 0 8px 24px rgba(14, 31, 51, 0.05);
+  box-shadow: 0 8px 24px rgba(11, 31, 58, 0.05);
 }
 
 .card,
@@ -423,7 +435,7 @@ button {
 
 .stat strong {
   display: block;
-  color: var(--ink-strong);
+  color: var(--primary-blue);
   font-size: 27px;
 }
 
@@ -462,33 +474,33 @@ button {
 }
 
 .tag {
-  color: #25495a;
-  background: #eef5f7;
+  color: var(--deep-blue);
+  background: var(--sky-blue);
 }
 
 .tag.orange {
-  color: #854006;
+  color: #914f00;
   background: var(--orange-soft);
 }
 
 .tag.blue {
-  color: #26498f;
+  color: var(--deep-blue);
   background: var(--blue-soft);
 }
 
 .status {
-  color: #075f5a;
-  background: var(--green-soft);
+  color: var(--deep-blue);
+  background: var(--sky-blue);
 }
 
 .status.warn {
-  color: #854006;
+  color: #914f00;
   background: var(--orange-soft);
 }
 
 .score {
   color: #fff;
-  background: var(--teal-dark);
+  background: var(--primary-blue);
 }
 
 .chip-row,
@@ -524,7 +536,7 @@ button {
 .meta-grid span {
   min-height: 54px;
   padding: 10px;
-  border: 1px solid #edf2f6;
+  border: 1px solid var(--soft-blue);
   border-radius: 8px;
   background: #fbfdff;
   color: var(--muted);
@@ -588,8 +600,8 @@ textarea {
 input:focus,
 select:focus,
 textarea:focus {
-  outline: 3px solid rgba(15, 143, 136, 0.16);
-  border-color: var(--teal);
+  outline: 3px solid rgba(0, 91, 172, 0.16);
+  border-color: var(--primary-blue);
 }
 
 .table-scroll {
@@ -605,7 +617,7 @@ table {
 th,
 td {
   padding: 12px 9px;
-  border-bottom: 1px solid #edf2f6;
+  border-bottom: 1px solid var(--soft-blue);
   text-align: left;
   vertical-align: top;
 }
@@ -625,9 +637,9 @@ th {
 .timeline span {
   padding: 12px;
   border-radius: 8px;
-  color: var(--ink);
-  background: #fff;
-  border: 1px solid var(--line);
+  color: var(--deep-blue);
+  background: var(--sky-blue);
+  border: 1px solid var(--soft-blue);
   font-size: 13px;
   line-height: 1.45;
 }
@@ -636,14 +648,14 @@ th {
   height: 10px;
   overflow: hidden;
   border-radius: 999px;
-  background: #e8eef5;
+  background: var(--soft-blue);
 }
 
 .progress span {
   display: block;
   width: var(--value);
   height: 100%;
-  background: linear-gradient(90deg, var(--teal), var(--orange));
+  background: linear-gradient(90deg, var(--primary-blue), var(--accent-blue));
 }
 
 .modal-backdrop {
@@ -653,7 +665,7 @@ th {
   display: grid;
   place-items: center;
   padding: 18px;
-  background: rgba(6, 20, 38, 0.58);
+  background: rgba(11, 31, 58, 0.58);
 }
 
 .modal {
@@ -689,7 +701,7 @@ th {
   padding: 14px 16px;
   border-radius: 8px;
   color: #fff;
-  background: var(--ink-strong);
+  background: var(--navy);
   box-shadow: var(--shadow);
 }
 
@@ -697,7 +709,7 @@ th {
   display: grid;
   place-items: center;
   min-height: 140px;
-  border: 1px dashed #c8d4df;
+  border: 1px dashed var(--soft-blue);
   border-radius: 8px;
   color: var(--muted);
   background: #fff;

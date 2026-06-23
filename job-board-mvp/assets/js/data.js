@@ -7,6 +7,8 @@ export const routes = [
   { id: "admin-portal", label: "관리자 포털" },
   { id: "about", label: "사업 소개" },
   { id: "kpi", label: "성과·KPI" },
+  { id: "login", label: "로그인" },
+  { id: "signup", label: "회원가입" },
 ];
 
 export const fields = [
