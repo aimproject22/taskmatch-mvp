@@ -361,7 +361,7 @@ function metricCards(items) {
 
 function profileCompletion() {
   const p = currentProfile();
-  const fieldsToCheck = [p.name, p.university, p.department, p.year, p.email, p.interests?.length, p.skills?.length, p.equipment?.length, p.projects, p.portfolio];
+  const fieldsToCheck = [p.name, p.university, p.department, p.year, p.email, p.specialty, p.interests?.length, p.skills?.length, p.equipment?.length, p.projects, p.portfolio];
   return Math.round((fieldsToCheck.filter(Boolean).length / fieldsToCheck.length) * 100);
 }
 
@@ -410,6 +410,19 @@ function renderStudentDashboard() {
       ["신청한 특화교육", `${state.courseApplications.length}건`],
       ["추천 인턴십", "8곳"],
     ])}
+    <section class="panel portal-panel">
+      <div class="problem-head">
+        <div>
+          <h2>나의 지원자 프로필</h2>
+          <p>${esc(state.profile.name)} · ${esc(state.profile.university)} · ${esc(state.profile.department)} · ${esc(state.profile.year)}</p>
+          <p>${esc(state.profile.specialty || "")}</p>
+          <p>${esc(state.profile.portfolio)}</p>
+        </div>
+        <span class="score">AI 적합도 92%</span>
+      </div>
+      <div class="chip-row">${chip(["Python", "Machine Learning", "SEM", "XRD", "Image Analysis", "Materials AI", "금속소재"], "blue")}</div>
+      <p><b>지원 상태:</b> ${esc(state.applications[0]?.status || "지원 완료")}</p>
+    </section>
     <section class="panel portal-panel">
       <h2>오늘의 추천 과제</h2>
       <div class="grid">${recommended.slice(0, 2).map(({ problem, fit }) => problemCard(problem, fit)).join("")}</div>
@@ -616,7 +629,7 @@ function renderAdminStudents() {
   return `
     <div class="heading compact-heading"><div><h2>학생/팀 관리</h2><p>학생 프로필과 연구팀 구성을 확인합니다.</p></div></div>
     <div class="two-col">
-      <section class="panel"><h2>대표 학생 프로필</h2><p>${esc(state.profile.name)} · ${esc(state.profile.university)} · ${esc(state.profile.department)}</p><div class="chip-row">${chip(state.profile.skills, "blue")}</div></section>
+      <section class="panel"><h2>대표 학생 프로필</h2><p>${esc(state.profile.name)} · ${esc(state.profile.university)} · ${esc(state.profile.department)} · ${esc(state.profile.year)}</p><p>${esc(state.profile.specialty || "")}</p><div class="chip-row">${chip(state.profile.skills, "blue")}</div></section>
       <section class="panel"><h2>연구팀</h2><div class="grid">${state.teams.map(teamSummaryCard).join("")}</div></section>
     </div>
   `;
@@ -858,11 +871,12 @@ function renderProfile() {
           ${input("department", "학과", p.department)}
           ${input("year", "학년", p.year)}
           ${input("email", "이메일", p.email, "email")}
+          ${input("specialty", "전문 분야", p.specialty || "")}
           ${input("interests", "관심 분야", p.interests.join(", "))}
           ${input("skills", "보유 기술스택", p.skills.join(", "))}
           ${input("equipment", "사용 가능 장비/분석법", p.equipment.join(", "))}
           ${textarea("projects", "프로젝트 경험", p.projects)}
-          ${input("portfolio", "포트폴리오 링크", p.portfolio)}
+          ${textarea("portfolio", "포트폴리오 요약", p.portfolio)}
           ${input("preferredProblemType", "희망 과제 유형", p.preferredProblemType)}
           ${input("preferredInternshipType", "희망 인턴십 유형", p.preferredInternshipType)}
           <div class="field full"><button class="primary" type="submit">역량 프로필 저장</button></div>
@@ -870,7 +884,9 @@ function renderProfile() {
         <aside class="grid">
           <section class="panel">
             <h2>내 역량 프로필 요약</h2>
-            <p>${esc(p.university)} · ${esc(p.department)} · ${esc(p.year)}</p>
+            <p>${esc(p.name)} · ${esc(p.university)} · ${esc(p.department)} · ${esc(p.year)}</p>
+            <p>${esc(p.specialty || "")}</p>
+            <p>${esc(p.portfolio)}</p>
             <div class="chip-row">${chip(p.interests, "blue")}${chip(p.skills, "blue")}${chip(p.equipment)}</div>
           </section>
           <section class="panel">
@@ -944,15 +960,18 @@ function teamCard(team) {
 
 function teamSummaryCard(team) {
   const problem = problemById(team.problemId);
+  const fit = calculateFit(currentProfile(), problem);
+  const application = state.applications.find((item) => item.teamId === team.id && item.problemId === problem.id);
   return `
     <article class="card">
       <span class="tag blue">${esc(team.preferredField)}</span>
       <h3 style="margin-top: 12px">${esc(team.name)}</h3>
       <p><b>대표:</b> ${esc(team.leader)} · <b>소속:</b> ${esc(team.university)}</p>
+      <p><b>전문 분야:</b> ${esc(state.profile.specialty || "재료AI, 금속소재, 미세조직 분석")}</p>
       <p><b>전공 구성:</b> ${esc(team.majors)}</p>
       <div class="chip-row">${chip(team.skills, "blue")}</div>
       <p><b>관심 과제:</b> ${esc(problem.title)}</p>
-      <span class="score">추천팀</span>
+      <div class="button-row"><span class="score">AI 적합도 ${fit.score}%</span><span class="status">${esc(application?.status || "지원 완료")}</span></div>
     </article>
   `;
 }
@@ -1053,7 +1072,30 @@ function renderAdmin() {
 
 function applicationTable() {
   if (!state.applications.length) return `<div class="empty">팀 지원 내역이 없습니다.</div>`;
-  return `<div class="table-scroll"><table><thead><tr><th>팀</th><th>실전문제</th><th>일자</th><th>상태</th></tr></thead><tbody>${state.applications.map((item) => `<tr><td>${esc(teamById(item.teamId).name)}</td><td>${esc(problemById(item.problemId).title)}</td><td>${esc(item.date)}</td><td><span class="status">${esc(item.status)}</span></td></tr>`).join("")}</tbody></table></div>`;
+  return `
+    <div class="table-scroll">
+      <table>
+        <thead><tr><th>지원 학생팀</th><th>대표 지원자</th><th>실전문제</th><th>AI 적합도</th><th>일자</th><th>상태</th></tr></thead>
+        <tbody>
+          ${state.applications
+            .map((item) => {
+              const team = teamById(item.teamId);
+              const problem = problemById(item.problemId);
+              const fit = calculateFit(currentProfile(), problem);
+              return `<tr>
+                <td>${esc(team.name)}<br /><span class="tag blue">${esc(toList(team.skills).join(", "))}</span></td>
+                <td><b>${esc(team.leader)}</b><br />${esc(state.profile.university)} · ${esc(state.profile.department)} · ${esc(state.profile.year)}<br />${esc(state.profile.specialty || "")}</td>
+                <td>${esc(problem.title)}</td>
+                <td><span class="score">${fit.score}%</span><br /><span class="tag">${esc(fit.reason)}</span></td>
+                <td>${esc(item.date)}</td>
+                <td><span class="status">${esc(item.status)}</span></td>
+              </tr>`;
+            })
+            .join("")}
+        </tbody>
+      </table>
+    </div>
+  `;
 }
 
 function renderMentor() {
@@ -1207,6 +1249,7 @@ function bindSubmit(event) {
       department: get("department"),
       year: get("year"),
       email: get("email"),
+      specialty: get("specialty"),
       interests: toList(get("interests")),
       skills: toList(get("skills")),
       equipment: toList(get("equipment")),
@@ -1354,7 +1397,7 @@ function submitApplication(teamId, problemId) {
   if (state.applications.some((item) => item.teamId === teamId && item.problemId === problemId)) {
     return "이미 해당 팀으로 지원한 실전문제입니다.";
   }
-  state.applications.unshift({ id: uid("application"), teamId, problemId, date: new Date().toISOString().slice(0, 10), status: "접수" });
+  state.applications.unshift({ id: uid("application"), teamId, problemId, date: new Date().toISOString().slice(0, 10), status: "지원 완료" });
   return "팀 지원 내역이 저장되었습니다.";
 }
 

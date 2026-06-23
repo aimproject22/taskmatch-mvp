@@ -14,12 +14,23 @@ function relatedTerms(value) {
   const base = norm(value);
   const map = {
     "이차전지·에너지소재": ["전지", "에너지", "소재", "xrd", "sem", "분말공정", "소결", "신소재공학"],
+    "이차전지·소재": ["이차전지", "에너지소재", "전지", "소재", "xrd", "sem", "분말공정", "소결", "신소재공학"],
     "첨단모빌리티": ["자율주행", "lidar", "신호처리", "시뮬레이션", "전자공학"],
-    "AI·반도체 SW": ["ai", "반도체", "python", "pytorch", "cnn", "이미지 분류", "컴퓨터공학"],
-    "우주항공·해양/철강·신소재": ["철강", "신소재", "sem", "이미지 분석", "python", "금속공학"],
-    python: ["파이썬", "데이터 분석", "pytorch", "cnn"],
+    "AI·반도체 SW": ["ai", "반도체", "python", "machine learning", "materials ai", "pytorch", "cnn", "이미지 분류", "컴퓨터공학"],
+    "철강·신소재": ["철강", "신소재", "금속소재", "sem", "image analysis", "이미지 분석", "python", "금속공학"],
+    "우주항공·해양/철강·신소재": ["철강", "신소재", "금속소재", "sem", "image analysis", "이미지 분석", "python", "금속공학"],
+    python: ["파이썬", "데이터 분석", "machine learning", "materials ai", "pytorch", "cnn"],
+    "machine learning": ["머신러닝", "재료ai", "materials ai", "물성 예측", "딥러닝", "ai"],
+    "materials ai": ["재료ai", "소재 데이터", "물성 예측", "machine learning", "python"],
+    "재료ai": ["materials ai", "소재 데이터", "물성 예측", "machine learning", "python"],
     sem: ["이미지 분석", "미세조직", "신소재공학"],
     xrd: ["결정성", "소재", "분석"],
+    "image analysis": ["이미지 분석", "미세조직", "sem"],
+    "이미지 분석": ["image analysis", "미세조직", "sem"],
+    "금속소재": ["금속공학", "철강", "신소재"],
+    "금속공학": ["금속소재", "철강", "신소재"],
+    "신소재공학부": ["신소재공학", "재료공학", "재료ai", "금속소재"],
+    "신소재공학": ["신소재공학부", "재료공학", "재료ai", "금속소재"],
   };
   return [base, ...(map[value] || map[base] || [])].map(norm);
 }
@@ -39,7 +50,9 @@ export function calculateFit(profile, problem) {
   const skillScore = required.length ? (matched.length / required.length) * 55 : 0;
   const fieldScore = includesRelated(interests.join(" "), problem.field) || includesRelated(text, problem.field) ? 25 : 0;
   const projectScore = problem.requiredSkills.filter((skill) => includesRelated(profile.projects, skill)).length * 5;
-  const score = Math.min(100, Math.round(skillScore + fieldScore + Math.min(20, projectScore)));
+  const calculatedScore = Math.min(100, Math.round(skillScore + fieldScore + Math.min(20, projectScore)));
+  const overrideScore = Number(profile.fitOverrides?.[problem.id] || 0);
+  const score = overrideScore ? Math.max(calculatedScore, overrideScore) : calculatedScore;
   return {
     score,
     matched: [...new Set(matched)].slice(0, 5),
