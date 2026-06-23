@@ -143,6 +143,65 @@ button {
   font-weight: 700;
 }
 
+.portal-login-badge {
+  display: grid;
+  gap: 2px;
+  padding: 8px 12px;
+  border: 1px solid var(--soft-blue);
+  border-radius: 8px;
+  color: var(--deep-blue);
+  background: var(--sky-blue);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.portal-login-badge strong {
+  color: var(--navy);
+}
+
+.auth-page {
+  display: grid;
+  place-items: center;
+  min-height: calc(100vh - 96px);
+}
+
+.auth-card {
+  width: min(520px, 100%);
+}
+
+.auth-brand {
+  text-align: center;
+}
+
+.auth-brand .brand-logo {
+  width: 190px;
+  height: 54px;
+  margin: 0 auto 10px;
+  object-position: center;
+}
+
+.auth-brand h1 {
+  margin: 10px 0 0;
+  color: var(--navy);
+}
+
+.demo-note {
+  padding: 10px;
+  border-radius: 8px;
+  color: var(--deep-blue);
+  background: var(--sky-blue);
+}
+
+.form-error {
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid var(--orange-soft);
+  border-radius: 8px;
+  color: #914f00;
+  background: var(--orange-soft);
+  font-weight: 800;
+}
+
 .primary {
   padding: 9px 14px;
   color: #fff;
@@ -838,8 +897,13 @@ th {
     width: 100%;
   }
 
-  .portal-topbar .auth-actions {
+  .portal-login-badge {
     order: 4;
+    width: 100%;
+  }
+
+  .portal-topbar .auth-actions {
+    order: 5;
   }
 
   .portal-topbar .auth-actions button {

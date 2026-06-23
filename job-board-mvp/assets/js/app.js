@@ -1,7 +1,7 @@
 import { fields, modules, routes } from "./data.js";
-import { currentUser, login, logout, signup } from "./auth.js";
+import { currentUser, demoCredentialForRole, demoLogin, getDemoAuth, logout } from "./auth.js";
 import { calculateFit, scoreProblemList } from "./match.js";
-import { defaultRouteForRole, hrefForRoute, topRouteForRoute } from "./role-router.js";
+import { hrefForRoute, loginRouteForRole, requiredRoleForPage, topRouteForRoute } from "./role-router.js";
 import { loadState, resetState, saveState, uid } from "./storage.js";
 
 let state = loadState();
@@ -76,6 +76,22 @@ function route() {
 }
 
 function go(id) {
+  const value = String(id || "");
+  if (pageContext === "student" && value.startsWith("student-portal")) {
+    location.hash = value.split(":")[1] || "";
+    render();
+    return;
+  }
+  if (pageContext === "company" && value.startsWith("company-portal")) {
+    location.hash = value.split(":")[1] || "";
+    render();
+    return;
+  }
+  if (pageContext === "admin" && value.startsWith("admin-portal")) {
+    location.hash = value.split(":")[1] || "";
+    render();
+    return;
+  }
   if (String(id).includes(".html")) {
     window.location.href = id;
     return;
@@ -163,6 +179,7 @@ function header() {
 }
 
 function portalTopbar(user) {
+  const auth = getDemoAuth();
   const labels = {
     student: ["학생 포털", "실전문제 추천·역량 프로필·팀 지원"],
     company: ["기업 포털", "원본문제 등록·지원팀 확인·멘토링 연계"],
@@ -177,13 +194,13 @@ function portalTopbar(user) {
         <strong>${esc(labels[0])}</strong>
         <span>${esc(labels[1])}</span>
       </div>
+      <div class="portal-login-badge">
+        <span>로그인: ${esc(auth?.username || "-")}</span>
+        <strong>역할: ${esc({ student: "학생", enterprise: "기업", admin: "관리자" }[auth?.role] || "-")}</strong>
+      </div>
       <div class="auth-actions">
         <button class="secondary" type="button" data-route="home">통합 홈페이지로 돌아가기</button>
-        ${
-          user
-            ? `<button class="secondary" type="button" data-route="mypage">마이페이지</button><button class="primary" type="button" data-action="logout">로그아웃</button>`
-            : `<button class="secondary" type="button" data-route="login">로그인</button><button class="primary" type="button" data-route="signup">회원가입</button>`
-        }
+        <button class="primary" type="button" data-action="logout">로그아웃</button>
       </div>
     </header>
   `;
@@ -1193,34 +1210,67 @@ function renderKpi() {
 }
 
 function renderLogin() {
+  const role = selectedLoginRole();
+  const copy = {
+    student: {
+      title: "학생 포털 로그인",
+      desc: "역량 프로필 등록, 실전문제 지원, 팀 매칭 서비스를 이용하려면 로그인하세요.",
+    },
+    enterprise: {
+      title: "기업 포털 로그인",
+      desc: "산업체 원본문제 등록, 지원 학생팀 확인, 멘토링 연계를 이용하려면 로그인하세요.",
+    },
+    admin: {
+      title: "관리자 포털 로그인",
+      desc: "원본문제 검토, 실전문제 전환, 팀 매칭, 성과 KPI 관리를 위해 로그인하세요.",
+    },
+  }[role];
+  const credential = demoCredentialForRole(role);
   return `
-    <main class="page">
-      <div class="two-col">
-        <form class="panel form-grid" id="loginForm">
-          <div class="field full"><h1>로그인</h1><p>데모 계정: student@example.com / 1234</p></div>
-          ${input("email", "이메일", "", "email")}
+    <main class="page auth-page">
+      <form class="panel form-grid auth-card" id="loginForm">
+        <div class="field full auth-brand">
+          <img class="brand-logo" src="assets/img/logo.png" alt="과제 JOB" />
+          <span class="tag blue">MVP mock login</span>
+          <h1>${esc(copy.title)}</h1>
+          <p>${esc(copy.desc)}</p>
+          <p class="demo-note">안내 계정: <b>${esc(credential.username)} / ${esc(credential.password)}</b></p>
+        </div>
+          ${input("username", "아이디")}
           ${input("password", "비밀번호", "", "password")}
+          <p class="field full form-error" id="loginError" hidden>아이디 또는 비밀번호가 올바르지 않습니다.</p>
           <div class="field full"><button class="primary" type="submit">로그인</button></div>
-        </form>
-        <section class="panel"><h2>역할별 마이페이지</h2><p>student, company, mentor, admin 역할에 따라 다른 요약 화면을 제공합니다.</p><button class="secondary" type="button" data-route="signup">회원가입</button></section>
-      </div>
+          <div class="field full button-row">
+            <button class="secondary" type="button" data-route="home">홈으로 돌아가기</button>
+            <button class="secondary" type="button" data-route="signup">회원가입</button>
+          </div>
+      </form>
     </main>
   `;
 }
 
 function renderSignup() {
   return `
-    <main class="page">
-      <form class="panel form-grid" id="signupForm">
-        <div class="field full"><h1>회원가입</h1><p>정적 MVP용 localStorage 기반 mock 회원가입입니다.</p></div>
+    <main class="page auth-page">
+      <form class="panel form-grid auth-card" id="signupForm">
+        <div class="field full auth-brand">
+          <img class="brand-logo" src="assets/img/logo.png" alt="과제 JOB" />
+          <h1>회원가입</h1>
+          <p>현재는 시연용 mock flow입니다. 실제 계정 생성 대신 역할을 선택하면 해당 역할 로그인 화면으로 이동합니다.</p>
+        </div>
         ${input("name", "이름")}
-        ${input("email", "이메일", "", "email")}
-        ${input("password", "비밀번호", "", "password")}
-        ${selectField("role", "역할", ["student", "company", "mentor", "admin"])}
-        <div class="field full"><button class="primary" type="submit">가입하고 시작하기</button></div>
+        ${selectField("role", "역할", ["student", "enterprise", "mentor", "admin"])}
+        <div class="field full"><button class="primary" type="submit">역할 로그인으로 이동</button></div>
+        <div class="field full"><button class="secondary" type="button" data-route="home">홈으로 돌아가기</button></div>
       </form>
     </main>
   `;
+}
+
+function selectedLoginRole() {
+  const role = new URLSearchParams(location.search).get("role") || "student";
+  const normalized = { company: "enterprise", mentor: "enterprise" }[role] || role;
+  return ["student", "enterprise", "admin"].includes(normalized) ? normalized : "student";
 }
 
 function renderMypage() {
@@ -1309,17 +1359,20 @@ function bindSubmit(event) {
   }
 
   if (form.id === "loginForm") {
-    const result = login(state, get("email"), get("password"));
-    if (!result.ok) return showToast(result.message);
-    persist("로그인되었습니다.");
-    go(defaultRouteForRole(result.user.role));
+    const result = demoLogin(selectedLoginRole(), get("username"), get("password"));
+    if (!result.ok) {
+      const error = document.querySelector("#loginError");
+      if (error) {
+        error.textContent = result.message;
+        error.hidden = false;
+      }
+      return showToast(result.message);
+    }
+    go(result.target);
   }
 
   if (form.id === "signupForm") {
-    const result = signup(state, { name: get("name"), email: get("email"), password: get("password"), role: get("role") });
-    if (!result.ok) return showToast(result.message);
-    persist("회원가입이 완료되었습니다.");
-    go(defaultRouteForRole(result.user.role));
+    go(loginRouteForRole(get("role")));
   }
 }
 
@@ -1436,9 +1489,20 @@ function bindInput(event) {
   render();
 }
 
-document.addEventListener("click", bindClick);
-document.addEventListener("submit", bindSubmit);
-document.addEventListener("input", bindInput);
-document.addEventListener("change", bindInput);
-window.addEventListener("hashchange", render);
-render();
+function canRenderCurrentPage() {
+  const requiredRole = requiredRoleForPage(pageContext);
+  if (!requiredRole) return true;
+  const auth = getDemoAuth();
+  if (auth?.role === requiredRole) return true;
+  window.location.replace(loginRouteForRole(requiredRole));
+  return false;
+}
+
+if (canRenderCurrentPage()) {
+  document.addEventListener("click", bindClick);
+  document.addEventListener("submit", bindSubmit);
+  document.addEventListener("input", bindInput);
+  document.addEventListener("change", bindInput);
+  window.addEventListener("hashchange", render);
+  render();
+}
