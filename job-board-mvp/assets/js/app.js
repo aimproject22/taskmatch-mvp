@@ -1,7 +1,7 @@
 import { fields, modules, routes } from "./data.js";
 import { currentUser, login, logout, signup } from "./auth.js";
 import { calculateFit, scoreProblemList } from "./match.js";
-import { defaultRouteForRole, topRouteForRoute } from "./role-router.js";
+import { defaultRouteForRole, hrefForRoute, topRouteForRoute } from "./role-router.js";
 import { loadState, resetState, saveState, uid } from "./storage.js";
 
 let state = loadState();
@@ -9,6 +9,7 @@ let modalProblemId = null;
 let toastTimer = null;
 
 const shell = document.querySelector("#shell");
+const pageContext = document.body.dataset.page || "home";
 
 const studentPortalMenu = [
   ["dashboard", "학생 대시보드"],
@@ -65,11 +66,32 @@ function toList(value) {
 }
 
 function route() {
-  return location.hash.replace("#", "") || "home";
+  const hash = location.hash.replace("#", "");
+  if (pageContext === "student") return hash.startsWith("student-portal") ? hash : `student-portal${hash ? `:${hash}` : ""}`;
+  if (pageContext === "company") return hash.startsWith("company-portal") ? hash : `company-portal${hash ? `:${hash}` : ""}`;
+  if (pageContext === "admin") return hash.startsWith("admin-portal") ? hash : `admin-portal${hash ? `:${hash}` : ""}`;
+  if (pageContext === "login" && !hash) return "login";
+  if (pageContext === "signup" && !hash) return "signup";
+  return hash || "home";
 }
 
 function go(id) {
-  location.hash = id;
+  if (String(id).includes(".html")) {
+    window.location.href = id;
+    return;
+  }
+  const href = hrefForRoute(id);
+  if (!href) {
+    location.hash = id;
+    return;
+  }
+  const target = new URL(href, location.href);
+  if (target.pathname === location.pathname) {
+    location.hash = target.hash.replace("#", "");
+    render();
+    return;
+  }
+  window.location.href = href;
 }
 
 function persist(message) {
@@ -110,6 +132,7 @@ function chip(items, tone = "") {
 
 function header() {
   const user = currentUser(state);
+  if (["student", "company", "admin"].includes(pageContext)) return portalTopbar(user);
   const activeTopRoute = topRouteForRoute(route().split(":")[0]);
   const visibleRoutes = user ? routes.filter((item) => !["login", "signup"].includes(item.id)) : routes;
   return `
@@ -133,6 +156,33 @@ function header() {
           user
             ? `<button class="secondary" type="button" data-route="mypage">마이페이지</button><button class="primary" type="button" data-action="logout">로그아웃</button>`
             : ""
+        }
+      </div>
+    </header>
+  `;
+}
+
+function portalTopbar(user) {
+  const labels = {
+    student: ["학생 포털", "실전문제 추천·역량 프로필·팀 지원"],
+    company: ["기업 포털", "원본문제 등록·지원팀 확인·멘토링 연계"],
+    admin: ["관리자 포털", "문제 검토·과제 전환·성과 KPI 관리"],
+  }[pageContext];
+  return `
+    <header class="site-header portal-topbar">
+      <button class="brand" type="button" data-route="home" aria-label="과제 JOB 홈으로 이동">
+        <img class="brand-logo" src="assets/img/logo.png" alt="과제 JOB" onerror="this.outerHTML='<span class=&quot;brand-fallback&quot;>과제 JOB</span>'" />
+      </button>
+      <div class="portal-topbar-title">
+        <strong>${esc(labels[0])}</strong>
+        <span>${esc(labels[1])}</span>
+      </div>
+      <div class="auth-actions">
+        <button class="secondary" type="button" data-route="home">통합 홈페이지로 돌아가기</button>
+        ${
+          user
+            ? `<button class="secondary" type="button" data-route="mypage">마이페이지</button><button class="primary" type="button" data-action="logout">로그아웃</button>`
+            : `<button class="secondary" type="button" data-route="login">로그인</button><button class="primary" type="button" data-route="signup">회원가입</button>`
         }
       </div>
     </header>
@@ -248,16 +298,15 @@ function renderHome() {
       <section class="section">
         <div class="heading">
           <div>
-            <p class="eyebrow" style="color: var(--primary-blue)">RECOMMENDED PROBLEMS</p>
-            <h2>추천 실전문제</h2>
+            <p class="eyebrow" style="color: var(--primary-blue)">PROGRAM OPERATING BASE</p>
+            <h2>사업단 운영 기반</h2>
           </div>
-          <button class="secondary" type="button" data-route="student-portal:problems">전체 보기</button>
+          <p>통합 홈페이지는 플랫폼의 목적과 운영 구조만 보여주고, 세부 기능은 각 역할별 전용 포털에서 사용합니다.</p>
         </div>
-        <div class="grid">
-          ${scoreProblemList(currentProfile(), state.problems)
-            .slice(0, 3)
-            .map(({ problem, fit }) => problemCard(problem, fit))
-            .join("")}
+        <div class="three-col">
+          <article class="card"><span class="tag blue">문제 발굴</span><h3 style="margin-top: 12px">산업체 원본문제 접수</h3><p>기업과 정출연의 현장 기술문제를 접수하고 사업단 검토 대상으로 관리합니다.</p></article>
+          <article class="card"><span class="tag blue">과제화</span><h3 style="margin-top: 12px">학부생 수행 가능 과제로 재구성</h3><p>분과 검토와 주제선정위 승인을 거쳐 실전문제 카드로 전환합니다.</p></article>
+          <article class="card"><span class="tag blue">성과 연계</span><h3 style="margin-top: 12px">멘토링·인턴십·KPI 관리</h3><p>학생팀 수행 결과를 포트폴리오, 인턴십, 진로 연계, 사업 성과로 축적합니다.</p></article>
         </div>
       </section>
     </main>
@@ -440,7 +489,33 @@ function renderCompanyDashboard() {
 }
 
 function renderCompanyRawStatus() {
-  return `<div class="heading compact-heading"><div><h2>등록한 문제 현황</h2><p>산업체가 등록한 원본문제의 검토 상태를 확인합니다.</p></div></div>${rawProblemTable(state.rawProblems)}`;
+  return `
+    <div class="heading compact-heading"><div><h2>등록한 문제 현황</h2><p>산업체가 등록한 원본문제의 검토 상태를 확인합니다.</p></div></div>
+    <div class="grid">
+      ${state.rawProblems.map(rawStatusCard).join("") || `<div class="empty">등록한 원본문제가 없습니다.</div>`}
+    </div>
+  `;
+}
+
+function rawStatusCard(item) {
+  const steps = ["접수", "검토 중", "재구성 중", "승인", "공모 등록", "지원 접수 중", "매칭 완료", "진행 중", "성과 검토"];
+  const normalized = item.status === "재구성 필요" ? "재구성 중" : item.status;
+  const activeIndex = Math.max(0, steps.indexOf(normalized));
+  return `
+    <article class="problem-card">
+      <div class="problem-head">
+        <div>
+          <span class="tag blue">${esc(item.industry)}</span>
+          <h3>${esc(item.title)}</h3>
+          <p>${esc(item.pain)}</p>
+        </div>
+        <span class="status ${["접수", "검토 중", "재구성 중"].includes(normalized) ? "warn" : ""}">${esc(normalized)}</span>
+      </div>
+      <div class="status-track">
+        ${steps.map((step, index) => `<span class="${index <= activeIndex ? "done" : ""}">${esc(step)}</span>`).join("")}
+      </div>
+    </article>
+  `;
 }
 
 function renderCompanyApplicants() {
@@ -486,8 +561,8 @@ function renderAdminPortal(section = "dashboard") {
     companies: renderAdminCompanies,
     mentors: renderAdminMentors,
     matching: renderAdminMatching,
-    education: () => unwrapPage(renderEducation()),
-    internship: () => unwrapPage(renderInternship()),
+    education: renderAdminEducationManage,
+    internship: renderAdminInternshipManage,
     kpi: () => unwrapPage(renderKpi()),
     archive: renderDataArchive,
   }[activeSection] || renderAdminDashboard;
@@ -567,6 +642,22 @@ function renderAdminMentors() {
 
 function renderAdminMatching() {
   return `<div class="heading compact-heading"><div><h2>지원/매칭 관리</h2><p>학생팀 지원 현황과 매칭 상태를 확인합니다.</p></div></div>${applicationTable()}`;
+}
+
+function renderAdminEducationManage() {
+  const rows = fields.flatMap((field) => modules.map((module) => [field, module, "운영 예정", "신청/이수 mock 관리"]));
+  return `
+    <div class="heading compact-heading"><div><h2>특화교육 관리</h2><p>4대 분야별 교육 모듈 운영 현황을 관리합니다.</p></div></div>
+    ${simpleTable(["분야", "모듈", "상태", "관리 항목"], rows)}
+  `;
+}
+
+function renderAdminInternshipManage() {
+  const rows = ["KIMS", "RIST", "KICET", "ETRI", "대구TP", "경북TP", "DIP", "KATECH"].map((host, index) => [host, fields[index % fields.length], "연계 가능", "후보팀 검토"]);
+  return `
+    <div class="heading compact-heading"><div><h2>인턴십 관리</h2><p>기관별 인턴십 트랙과 연계 후보팀을 관리합니다.</p></div></div>
+    ${simpleTable(["기관", "연계 분야", "상태", "관리 항목"], rows)}
+  `;
 }
 
 function renderDataArchive() {

@@ -121,6 +121,28 @@ button {
   align-items: center;
 }
 
+.portal-topbar {
+  justify-content: space-between;
+}
+
+.portal-topbar-title {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+  margin-right: auto;
+}
+
+.portal-topbar-title strong {
+  color: var(--navy);
+  font-size: 18px;
+}
+
+.portal-topbar-title span {
+  color: var(--muted);
+  font-size: 13px;
+  font-weight: 700;
+}
+
 .primary {
   padding: 9px 14px;
   color: #fff;
@@ -403,6 +425,32 @@ button {
 
 .admin-flow {
   grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+
+.status-track {
+  display: grid;
+  grid-template-columns: repeat(9, minmax(82px, 1fr));
+  gap: 6px;
+  overflow-x: auto;
+}
+
+.status-track span {
+  min-height: 34px;
+  padding: 8px;
+  border: 1px solid var(--soft-blue);
+  border-radius: 8px;
+  color: var(--muted);
+  background: #fff;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.status-track span.done {
+  color: var(--deep-blue);
+  background: var(--sky-blue);
+  border-color: var(--accent-blue);
 }
 
 .layout {
@@ -782,6 +830,20 @@ th {
   .auth-actions {
     width: 100%;
     order: 4;
+    flex-wrap: wrap;
+  }
+
+  .portal-topbar-title {
+    order: 3;
+    width: 100%;
+  }
+
+  .portal-topbar .auth-actions {
+    order: 4;
+  }
+
+  .portal-topbar .auth-actions button {
+    flex: 1 1 150px;
   }
 
   .hero h1,
