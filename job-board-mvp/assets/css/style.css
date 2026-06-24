@@ -949,8 +949,8 @@ th {
   .site-logo,
   .brand-logo {
     width: auto;
-    height: 44px;
-    max-width: min(240px, calc(100vw - 88px));
+    height: 50px;
+    max-width: min(260px, calc(100vw - 88px));
   }
 
   .mobile-menu-toggle {
@@ -1170,8 +1170,8 @@ th {
 
   .site-logo,
   .brand-logo {
-    height: 42px;
-    max-width: min(210px, calc(100vw - 88px));
+    height: 48px;
+    max-width: min(250px, calc(100vw - 88px));
   }
 
   .modal-backdrop {
@@ -1185,5 +1185,13 @@ th {
 
   table {
     min-width: 640px;
+  }
+}
+
+@media (max-width: 375px) {
+  .site-logo,
+  .brand-logo {
+    height: 44px;
+    max-width: min(230px, calc(100vw - 88px));
   }
 }
