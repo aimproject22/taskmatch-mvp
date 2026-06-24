@@ -82,9 +82,11 @@ img {
   background: transparent;
 }
 
+.site-logo,
 .brand-logo {
-  width: 196px;
+  width: auto;
   height: 48px;
+  max-width: 230px;
   object-fit: contain;
   object-position: left center;
 }
@@ -198,9 +200,11 @@ img {
   text-align: center;
 }
 
+.auth-brand .site-logo,
 .auth-brand .brand-logo {
-  width: 190px;
-  height: 54px;
+  width: auto;
+  height: 58px;
+  max-width: 250px;
   margin: 0 auto 10px;
   object-position: center;
 }
@@ -940,9 +944,11 @@ th {
     min-width: 150px;
   }
 
+  .site-logo,
   .brand-logo {
-    width: 152px;
-    height: 40px;
+    width: auto;
+    height: 38px;
+    max-width: min(220px, calc(100vw - 88px));
   }
 
   .mobile-menu-toggle {
@@ -986,17 +992,39 @@ th {
     width: 100%;
   }
 
+  .portal-topbar {
+    gap: 8px;
+    min-height: 64px;
+    padding: 10px 16px;
+  }
+
+  .portal-topbar-title strong {
+    font-size: 16px;
+  }
+
+  .portal-topbar-title span {
+    display: none;
+  }
+
   .portal-login-badge {
     order: 4;
     width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 12px;
+    align-items: center;
   }
 
   .portal-topbar .auth-actions {
     order: 5;
+    gap: 6px;
   }
 
   .portal-topbar .auth-actions button {
     flex: 1 1 150px;
+    min-height: 40px;
+    padding: 8px 10px;
+    font-size: 13px;
   }
 
   .hero-inner {
@@ -1131,9 +1159,11 @@ th {
     padding: 24px 18px;
   }
 
+  .auth-brand .site-logo,
   .auth-brand .brand-logo {
-    width: 156px;
+    width: auto;
     height: 44px;
+    max-width: 220px;
   }
 
   .modal-backdrop {

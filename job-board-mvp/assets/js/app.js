@@ -154,8 +154,8 @@ function header() {
   const visibleRoutes = user ? routes.filter((item) => !["login", "signup"].includes(item.id)) : routes;
   return `
     <header class="site-header">
-      <button class="brand" type="button" data-route="home" aria-label="과제 JOB 홈으로 이동">
-        <img class="brand-logo" src="assets/img/logo.png" alt="과제 JOB" onerror="this.outerHTML='<span class=&quot;brand-fallback&quot;>과제 JOB</span>'" />
+      <button class="brand" type="button" data-route="home" aria-label="SOLVE-X 홈으로 이동">
+        <img class="site-logo" src="assets/img/solve-x-logo.png" alt="SOLVE-X 산업체 실전문제 사업단" onerror="this.outerHTML='<span class=&quot;brand-fallback&quot;>SOLVE-X</span>'" />
       </button>
       <button class="mobile-menu-toggle" type="button" data-action="toggle-menu" aria-label="메뉴 열기" aria-expanded="${isMobileMenuOpen ? "true" : "false"}">☰</button>
       <nav class="nav ${isMobileMenuOpen ? "is-open" : ""}" aria-label="주요 메뉴">
@@ -189,8 +189,8 @@ function portalTopbar(user) {
   }[pageContext];
   return `
     <header class="site-header portal-topbar">
-      <button class="brand" type="button" data-route="home" aria-label="과제 JOB 홈으로 이동">
-        <img class="brand-logo" src="assets/img/logo.png" alt="과제 JOB" onerror="this.outerHTML='<span class=&quot;brand-fallback&quot;>과제 JOB</span>'" />
+      <button class="brand" type="button" data-route="home" aria-label="SOLVE-X 홈으로 이동">
+        <img class="site-logo" src="assets/img/solve-x-logo.png" alt="SOLVE-X 산업체 실전문제 사업단" onerror="this.outerHTML='<span class=&quot;brand-fallback&quot;>SOLVE-X</span>'" />
       </button>
       <div class="portal-topbar-title">
         <strong>${esc(labels[0])}</strong>
@@ -248,7 +248,7 @@ function renderHome() {
       <section class="hero">
         <div class="hero-inner">
           <div>
-            <p class="eyebrow">SOLVE-X · 산업체 실전문제 공모·매칭 플랫폼</p>
+            <p class="eyebrow">SOLVE-X · 산업체 실전문제 사업단</p>
             <h1>산업체 실전문제를 학부생 연구팀과 연결하는 차세대 공학자 양성 플랫폼</h1>
             <p>
               기업은 현장의 기술문제를 등록하고, 학생은 전공과 역량에 맞는 실전문제에 참여합니다.
@@ -722,7 +722,7 @@ function renderAbout() {
         <div>
           <p class="eyebrow" style="color: var(--primary-blue)">PROGRAM OVERVIEW</p>
           <h1>사업 소개</h1>
-          <p>과제 JOB은 산업체 실전문제를 학부생 연구팀이 수행 가능한 과제로 재구성하고, 멘토링·특화교육·인턴십·성과관리로 연결하는 플랫폼입니다.</p>
+          <p>SOLVE-X 플랫폼은 산업체 실전문제를 학부생 연구팀이 수행 가능한 과제로 재구성하고, 멘토링·특화교육·인턴십·성과관리로 연결하는 플랫폼입니다.</p>
         </div>
       </section>
       <section class="panel portal-panel">
@@ -1232,7 +1232,7 @@ function renderLogin() {
     <main class="page auth-page">
       <form class="panel form-grid auth-card" id="loginForm">
         <div class="field full auth-brand">
-          <img class="brand-logo" src="assets/img/logo.png" alt="과제 JOB" />
+          <img class="site-logo" src="assets/img/solve-x-logo.png" alt="SOLVE-X 산업체 실전문제 사업단" />
           <span class="tag blue">MVP mock login</span>
           <h1>${esc(copy.title)}</h1>
           <p>${esc(copy.desc)}</p>
@@ -1256,7 +1256,7 @@ function renderSignup() {
     <main class="page auth-page">
       <form class="panel form-grid auth-card" id="signupForm">
         <div class="field full auth-brand">
-          <img class="brand-logo" src="assets/img/logo.png" alt="과제 JOB" />
+          <img class="site-logo" src="assets/img/solve-x-logo.png" alt="SOLVE-X 산업체 실전문제 사업단" />
           <h1>회원가입</h1>
           <p>현재는 시연용 mock flow입니다. 실제 계정 생성 대신 역할을 선택하면 해당 역할 로그인 화면으로 이동합니다.</p>
         </div>
