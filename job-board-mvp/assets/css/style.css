@@ -99,7 +99,8 @@ img {
   flex-shrink: 0;
   padding: 0;
   border: 0;
-  background: transparent;
+  background: transparent !important;
+  box-shadow: none !important;
 }
 
 .site-logo,
@@ -108,8 +109,13 @@ img {
   height: 62px;
   max-width: 290px;
   display: block;
+  background: transparent !important;
+  box-shadow: none !important;
+  filter: none !important;
+  opacity: 1 !important;
   object-fit: contain;
   object-position: left center;
+  mix-blend-mode: normal !important;
 }
 
 .brand-fallback {

@@ -155,7 +155,7 @@ function header() {
   return `
     <header class="site-header">
       <button class="brand" type="button" data-route="home" aria-label="SOLVE-X 홈으로 이동">
-        <img class="site-logo" src="assets/img/solve-x-logo.png" alt="SOLVE-X 산업체 실전문제 사업단" onerror="this.outerHTML='<span class=&quot;brand-fallback&quot;>SOLVE-X</span>'" />
+        <img class="site-logo" src="assets/img/solve-x-logo-transparent.png?v=2" alt="SOLVE-X 산업체 실전문제 사업단" onerror="this.outerHTML='<span class=&quot;brand-fallback&quot;>SOLVE-X</span>'" />
       </button>
       <button class="mobile-menu-toggle" type="button" data-action="toggle-menu" aria-label="메뉴 열기" aria-expanded="${isMobileMenuOpen ? "true" : "false"}">☰</button>
       <nav class="nav ${isMobileMenuOpen ? "is-open" : ""}" aria-label="주요 메뉴">
@@ -190,7 +190,7 @@ function portalTopbar(user) {
   return `
     <header class="site-header portal-topbar">
       <button class="brand" type="button" data-route="home" aria-label="SOLVE-X 홈으로 이동">
-        <img class="site-logo" src="assets/img/solve-x-logo.png" alt="SOLVE-X 산업체 실전문제 사업단" onerror="this.outerHTML='<span class=&quot;brand-fallback&quot;>SOLVE-X</span>'" />
+        <img class="site-logo" src="assets/img/solve-x-logo-transparent.png?v=2" alt="SOLVE-X 산업체 실전문제 사업단" onerror="this.outerHTML='<span class=&quot;brand-fallback&quot;>SOLVE-X</span>'" />
       </button>
       <div class="portal-topbar-title">
         <strong>${esc(labels[0])}</strong>
@@ -1232,7 +1232,7 @@ function renderLogin() {
     <main class="page auth-page">
       <form class="panel form-grid auth-card" id="loginForm">
         <div class="field full auth-brand">
-          <img class="site-logo" src="assets/img/solve-x-logo.png" alt="SOLVE-X 산업체 실전문제 사업단" />
+          <img class="site-logo" src="assets/img/solve-x-logo-transparent.png?v=2" alt="SOLVE-X 산업체 실전문제 사업단" />
           <span class="tag blue">MVP mock login</span>
           <h1>${esc(copy.title)}</h1>
           <p>${esc(copy.desc)}</p>
@@ -1256,7 +1256,7 @@ function renderSignup() {
     <main class="page auth-page">
       <form class="panel form-grid auth-card" id="signupForm">
         <div class="field full auth-brand">
-          <img class="site-logo" src="assets/img/solve-x-logo.png" alt="SOLVE-X 산업체 실전문제 사업단" />
+          <img class="site-logo" src="assets/img/solve-x-logo-transparent.png?v=2" alt="SOLVE-X 산업체 실전문제 사업단" />
           <h1>회원가입</h1>
           <p>현재는 시연용 mock flow입니다. 실제 계정 생성 대신 역할을 선택하면 해당 역할 로그인 화면으로 이동합니다.</p>
         </div>
