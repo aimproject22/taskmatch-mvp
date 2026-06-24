@@ -11,9 +11,9 @@ export function loadState() {
       problems: parsed.problems?.length ? parsed.problems : seedState.problems,
       users: parsed.users?.length ? parsed.users : seedState.users,
     };
-    return migrateLegacyStudent(state);
+    return migrateInstitutionTerms(migrateLegacyStudent(state));
   } catch {
-    return structuredClone(seedState);
+    return migrateInstitutionTerms(structuredClone(seedState));
   }
 }
 
@@ -44,6 +44,19 @@ function migrateLegacyStudent(state) {
   }
 
   return state;
+}
+
+function migrateInstitutionTerms(value) {
+  const legacyFull = ["정부", "출연", "연구기관"].join("");
+  const legacyShort = ["정", "출", "연"].join("");
+  if (typeof value === "string") {
+    return value.replaceAll(legacyFull, "연구기관").replaceAll(legacyShort, "연구기관");
+  }
+  if (Array.isArray(value)) return value.map(migrateInstitutionTerms);
+  if (value && typeof value === "object") {
+    return Object.fromEntries(Object.entries(value).map(([key, item]) => [key, migrateInstitutionTerms(item)]));
+  }
+  return value;
 }
 
 export function saveState(state) {

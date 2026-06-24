@@ -239,7 +239,7 @@ function renderHome() {
     ["실전문제", "40건"],
     ["참여 연구팀", "40팀"],
     ["참여 학생", "200명"],
-    ["산업체·정출연", "연계"],
+    ["산업체·연구기관·지자체 연계", "협력"],
     ["4대 특화 분야", "운영"],
     ["팀당 연구비", "10,000천원"],
   ];
@@ -323,7 +323,7 @@ function renderHome() {
           <p>통합 홈페이지는 플랫폼의 목적과 운영 구조만 보여주고, 세부 기능은 각 역할별 전용 포털에서 사용합니다.</p>
         </div>
         <div class="three-col">
-          <article class="card"><span class="tag blue">문제 발굴</span><h3 style="margin-top: 12px">산업체 원본문제 접수</h3><p>기업과 정출연의 현장 기술문제를 접수하고 사업단 검토 대상으로 관리합니다.</p></article>
+          <article class="card"><span class="tag blue">문제 발굴</span><h3 style="margin-top: 12px">산업체 원본문제 접수</h3><p>기업과 연구기관의 현장 기술문제를 접수하고 사업단 검토 대상으로 관리합니다.</p></article>
           <article class="card"><span class="tag blue">과제화</span><h3 style="margin-top: 12px">학부생 수행 가능 과제로 재구성</h3><p>분과 검토와 주제선정위 승인을 거쳐 실전문제 카드로 전환합니다.</p></article>
           <article class="card"><span class="tag blue">성과 연계</span><h3 style="margin-top: 12px">멘토링·인턴십·KPI 관리</h3><p>학생팀 수행 결과를 포트폴리오, 인턴십, 진로 연계, 사업 성과로 축적합니다.</p></article>
         </div>
@@ -1171,7 +1171,7 @@ function renderEducation() {
 
 function renderInternship() {
   const tracks = [
-    ["정출연 트랙", "KIMS, RIST, KICET, ETRI와 연계해 연구개발 현장 실습을 지원합니다."],
+    ["연구기관 트랙", "KIMS, RIST, KICET, ETRI 등 연구기관과 연계해 연구개발 현장 실습을 지원합니다."],
     ["지자체·진흥기관 트랙", "대구TP, 경북TP, DIP 등 지역혁신기관과 실무형 프로젝트를 연결합니다."],
     ["산업체 트랙", "KATECH 및 참여 기업의 현장 과제와 채용 검토를 연계합니다."],
   ];
