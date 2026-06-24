@@ -7,6 +7,7 @@ import { loadState, resetState, saveState, uid } from "./storage.js";
 let state = loadState();
 let modalProblemId = null;
 let toastTimer = null;
+let isMobileMenuOpen = false;
 
 const shell = document.querySelector("#shell");
 const pageContext = document.body.dataset.page || "home";
@@ -156,7 +157,8 @@ function header() {
       <button class="brand" type="button" data-route="home" aria-label="과제 JOB 홈으로 이동">
         <img class="brand-logo" src="assets/img/logo.png" alt="과제 JOB" onerror="this.outerHTML='<span class=&quot;brand-fallback&quot;>과제 JOB</span>'" />
       </button>
-      <nav class="nav" aria-label="주요 메뉴">
+      <button class="mobile-menu-toggle" type="button" data-action="toggle-menu" aria-label="메뉴 열기" aria-expanded="${isMobileMenuOpen ? "true" : "false"}">☰</button>
+      <nav class="nav ${isMobileMenuOpen ? "is-open" : ""}" aria-label="주요 메뉴">
         ${visibleRoutes
           .map(
             (item) => `
@@ -1378,11 +1380,18 @@ function bindSubmit(event) {
 
 function bindClick(event) {
   const routeButton = event.target.closest("[data-route]");
-  if (routeButton) return go(routeButton.dataset.route);
+  if (routeButton) {
+    isMobileMenuOpen = false;
+    return go(routeButton.dataset.route);
+  }
   const actionButton = event.target.closest("[data-action]");
   if (!actionButton) return;
   const { action, id, status, team } = actionButton.dataset;
 
+  if (action === "toggle-menu") {
+    isMobileMenuOpen = !isMobileMenuOpen;
+    return render();
+  }
   if (action === "logout") {
     logout(state);
     persist("로그아웃되었습니다.");

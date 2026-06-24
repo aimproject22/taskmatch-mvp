@@ -28,6 +28,11 @@
   box-sizing: border-box;
 }
 
+html,
+body {
+  overflow-x: hidden;
+}
+
 body {
   margin: 0;
   color: var(--ink);
@@ -46,6 +51,12 @@ select {
 
 button {
   cursor: pointer;
+  max-width: 100%;
+}
+
+img {
+  max-width: 100%;
+  height: auto;
 }
 
 .site-header {
@@ -89,6 +100,20 @@ button {
   flex: 1;
   justify-content: center;
   gap: 4px;
+}
+
+.mobile-menu-toggle {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 42px;
+  height: 42px;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--deep-blue);
+  background: #fff;
+  font-size: 24px;
+  font-weight: 900;
 }
 
 .nav button,
@@ -344,6 +369,17 @@ button {
   gap: 14px;
 }
 
+.grid > *,
+.stat-grid > *,
+.field-grid > *,
+.two-col > *,
+.three-col > *,
+.role-grid > *,
+.meta-grid > *,
+.portal-content > * {
+  min-width: 0;
+}
+
 .stat-grid {
   grid-template-columns: repeat(6, minmax(0, 1fr));
 }
@@ -491,6 +527,9 @@ button {
   grid-template-columns: repeat(9, minmax(82px, 1fr));
   gap: 6px;
   overflow-x: auto;
+  width: 100%;
+  padding-bottom: 4px;
+  -webkit-overflow-scrolling: touch;
 }
 
 .status-track span {
@@ -533,11 +572,13 @@ button {
 .panel,
 .problem-card {
   padding: 20px;
+  min-width: 0;
 }
 
 .stat {
   min-height: 104px;
   padding: 18px;
+  min-width: 0;
 }
 
 .stat strong {
@@ -712,7 +753,9 @@ textarea:focus {
 }
 
 .table-scroll {
+  width: 100%;
   overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
 table {
@@ -840,13 +883,20 @@ th {
     padding-bottom: 2px;
   }
 
-  .hero-inner,
   .layout,
   .portal-layout,
-  .role-grid,
-  .two-col,
-  .three-col {
+  .two-col {
     grid-template-columns: 1fr;
+  }
+
+  .hero-inner {
+    grid-template-columns: minmax(0, 1fr) minmax(300px, 360px);
+    min-height: auto;
+  }
+
+  .role-grid,
+  .three-col {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .portal-hero {
@@ -869,11 +919,20 @@ th {
   }
 }
 
-@media (max-width: 720px) {
+@media (max-width: 768px) {
   .page,
   .section,
   .hero-inner {
     width: min(100% - 32px, var(--max));
+  }
+
+  .site-header:not(.portal-topbar) {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+    min-height: 64px;
+    padding: 10px 16px;
   }
 
   .brand {
@@ -884,6 +943,36 @@ th {
   .brand-logo {
     width: 152px;
     height: 40px;
+  }
+
+  .mobile-menu-toggle {
+    display: inline-flex;
+    justify-self: end;
+  }
+
+  .site-header:not(.portal-topbar) .nav {
+    display: none;
+    grid-column: 1 / -1;
+    order: 3;
+    width: 100%;
+    padding: 8px;
+    border: 1px solid var(--soft-blue);
+    border-radius: 8px;
+    background: #fff;
+    box-shadow: 0 14px 32px rgba(11, 31, 58, 0.1);
+    overflow: visible;
+  }
+
+  .site-header:not(.portal-topbar) .nav.is-open {
+    display: grid;
+    gap: 4px;
+  }
+
+  .site-header:not(.portal-topbar) .nav button {
+    width: 100%;
+    min-height: 46px;
+    padding: 12px 14px;
+    text-align: left;
   }
 
   .auth-actions {
@@ -910,6 +999,23 @@ th {
     flex: 1 1 150px;
   }
 
+  .hero-inner {
+    grid-template-columns: 1fr;
+    gap: 22px;
+    min-height: auto;
+    padding: 52px 0 58px;
+    text-align: center;
+  }
+
+  .hero p {
+    margin-inline: auto;
+    font-size: 16px;
+  }
+
+  .hero-panel {
+    text-align: left;
+  }
+
   .hero h1,
   .heading h1,
   .portal-hero h1 {
@@ -920,12 +1026,126 @@ th {
   .meta-grid,
   .form-grid,
   .role-grid,
+  .three-col,
+  .two-col,
   .timeline {
     grid-template-columns: 1fr;
+  }
+
+  .portal-page {
+    padding-top: 18px;
+  }
+
+  .portal-hero {
+    padding: 22px;
+  }
+
+  .portal-hero .button-row,
+  .hero .button-row,
+  .card .button-row,
+  .panel .button-row {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .portal-hero .button-row button,
+  .hero .button-row button,
+  .card .button-row button,
+  .panel .button-row button {
+    width: 100%;
+  }
+
+  .portal-menu {
+    width: 100%;
+    padding: 8px;
+    gap: 8px;
+  }
+
+  .portal-menu button {
+    min-height: 44px;
+    padding: 10px 12px;
   }
 
   .heading,
   .problem-head {
     display: grid;
+  }
+}
+
+@media (max-width: 480px) {
+  body {
+    font-size: 15px;
+  }
+
+  .page,
+  .section,
+  .hero-inner {
+    width: min(100% - 28px, var(--max));
+  }
+
+  .page {
+    padding: 24px 0 54px;
+  }
+
+  .section {
+    padding: 46px 0;
+  }
+
+  .hero h1 {
+    font-size: 28px;
+    line-height: 1.22;
+  }
+
+  .heading h1,
+  .heading h2,
+  .portal-hero h1 {
+    font-size: 24px;
+  }
+
+  .compact-heading h2,
+  .card h3,
+  .panel h2,
+  .panel h3,
+  .problem-card h3 {
+    font-size: 20px;
+  }
+
+  .role-card,
+  .card,
+  .panel,
+  .problem-card,
+  .stat {
+    padding: 16px;
+  }
+
+  .role-card {
+    min-height: auto;
+  }
+
+  .auth-page {
+    min-height: calc(100vh - 72px);
+  }
+
+  .auth-card {
+    padding: 24px 18px;
+  }
+
+  .auth-brand .brand-logo {
+    width: 156px;
+    height: 44px;
+  }
+
+  .modal-backdrop {
+    padding: 10px;
+  }
+
+  .modal-head,
+  .modal-body {
+    padding: 16px;
+  }
+
+  table {
+    min-width: 640px;
   }
 }
